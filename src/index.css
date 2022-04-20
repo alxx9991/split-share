@@ -1,0 +1,60 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+html {
+  --color-primary: #abc4ff;
+  --color-secondary: #c1d3fe;
+  --color-tertiary: #edf2fb;
+  --color-dark: #000000;
+
+  --color-black: #000000;
+  --color-grey: #666666;
+  --color-white: #ffffff;
+
+  --font-size-h1: 305%;
+  --font-size-h2: 244%;
+  --font-size-h3: 195%;
+  --font-size-h4: 156%;
+  --font-size-h5: 125%;
+
+  font-size: 54.5%;
+}
+
+@media screen and (min-width: 768px) {
+  html {
+    font-size: 58.5%;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  html {
+    font-size: 62.5%;
+  }
+}
+
+body {
+  font-size: 1.6rem;
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  background-color: var(--color-grey);
+  box-sizing: border-box;
+  color: var(--color-dark);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0rem;
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  line-height: 1.3;
+}

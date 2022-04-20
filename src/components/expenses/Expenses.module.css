@@ -1,0 +1,12 @@
+.expenses {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  margin: 0 auto;
+  height: 20rem;
+  align-items: center;
+}
+
+.inner-expenses {
+  height: 20rem;
+}

@@ -1,0 +1,134 @@
+.expense-form {
+  width: 80%;
+}
+
+@media screen and (min-width: 768px) {
+  .expense-form {
+    min-width: 60rem;
+    width: 70%;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .expense-form {
+    width: 50%;
+    min-width: 80rem;
+  }
+}
+
+.expense-form form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2.7rem;
+}
+
+.expense-form__input {
+  text-align: left;
+  grid-column: 1 / span 1;
+}
+
+.expense-form__input input {
+  font: inherit;
+  padding: 1rem;
+  border-radius: 0.4rem;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+
+.expense-form__input input:hover {
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.expense-form__input input:focus {
+  outline: 1px solid var(--color-primary);
+}
+
+.expense-form__input .invalid_input {
+  border: 1px solid red;
+  background-color: #ffcccb;
+}
+
+.expense-form__input .invalid_input:focus {
+  outline: 1px solid red;
+}
+
+.error-text {
+  position: absolute;
+  transform: translateY(0.2rem);
+  color: red;
+}
+
+@media screen and (min-width: 768px) {
+  .expense-form form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-flow: dense;
+    gap: 2.7rem 0;
+  }
+
+  .expense-form__input {
+    width: 85%;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .expense-form form {
+    padding: 1rem;
+  }
+
+  .expense-form__input {
+    font-size: var(--font-size-h5);
+  }
+}
+
+.expense-form__input label {
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.65rem;
+}
+
+.expense-form__input--checkbox {
+  margin: 0 0 0.5rem 0;
+  grid-column: 2 / span 1;
+}
+
+.expense-form__input--checkbox__inner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.expense-form__input--checkbox label {
+  margin: 0;
+}
+
+.expense-form__input--checkbox input {
+  width: min-content;
+}
+
+.expense-form__buttons {
+  display: flex;
+  grid-column: 1 / -1;
+  justify-content: center;
+  gap: 3rem;
+}
+
+.expense-form__buttons button {
+  width: 13rem;
+}
+
+@media screen and (min-width: 768px) {
+  .expense-form__buttons {
+    gap: 5rem;
+  }
+
+  .expense-form__buttons button {
+    width: 16rem;
+  }
+}
+@media screen and (min-width: 1200px) {
+  .expense-form__buttons {
+    gap: 6rem;
+  }
+}

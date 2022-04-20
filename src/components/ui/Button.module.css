@@ -1,0 +1,50 @@
+.button {
+  background-color: var(--color-secondary);
+  height: 5rem;
+  width: 12rem;
+  padding: 1rem;
+  border: none;
+  box-shadow: 0.2rem 0.2rem 0.5rem 0px rgba(0, 0, 0, 0.25);
+  border-radius: 0.2rem;
+  color: inherit;
+}
+
+.button:hover {
+  border: 0.3rem solid var(--color-white);
+  color: var(--color-white);
+  transition: all 0.1s;
+}
+
+.button:active {
+  box-shadow: 0.2rem 0.2rem 0.1rem 0px rgba(0, 0, 0, 0.3);
+}
+
+.button--active {
+  box-shadow: 0.2rem 0.2rem 0.1rem 0px rgba(0, 0, 0, 0.3);
+  border: 0.3rem solid var(--color-white);
+  color: var(--color-white);
+}
+
+.button--inactive {
+  background-color: #ccc;
+}
+
+.button--inactive:hover {
+  border: inherit;
+  color: inherit;
+}
+
+@media screen and (min-width: 768px) {
+  .button {
+    font-size: var(--font-size-h5);
+    font-weight: 400;
+    height: 6rem;
+    width: 14rem;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .button {
+    font-weight: 700;
+  }
+}
