@@ -1,6 +1,7 @@
 .expense-list {
   margin-top: 2rem;
-  width: 70%;
+  width: 80%;
+  text-align: center;
 }
 
 .expense-list h2 {
@@ -13,39 +14,58 @@
   .expense-list {
     width: 60%;
   }
-
-  .expense-list h2 {
-    text-align: left;
-  }
 }
 
-.expense-list__list {
-  list-style: none;
+.table__container {
+  width: 85%;
+  background-color: var(--color-tertiary);
+  box-shadow: 0.2rem 0.2rem 0.75rem 0.1rem rgba(0, 0, 0, 0.5);
+  overflow-x: auto;
+  margin: 0 auto;
+  margin-bottom: 1.5rem;
 }
 
-.expense-list__list--li {
-  margin-bottom: 2rem;
-  background: var(--color-white);
-  padding: 1rem;
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: max-content;
+  position: relative;
+}
+
+.table__td,
+.table__th {
+  text-align: left;
+}
+
+.table__th {
+  background-color: var(--color-primary);
+  padding: 1.5rem;
+}
+
+.table__td {
+  padding: 1.5rem;
+}
+
+.table__tr:nth-child(even) {
+  background-color: var(--color-white);
+}
+
+.table__tr:last-child table__td:last-child {
+  border-bottom-right-radius: 0.2rem;
+}
+
+.table__button {
+  background-color: var(--color-primary);
+  border: 1.5px solid transparent;
+  padding: 0.5rem;
   border-radius: 0.2rem;
-  box-shadow: 0.2rem 0.2rem 0.5rem 0 rgba(0, 0, 0, 0.5);
+  box-shadow: 0.2rem 0.2rem 0.3rem 0 rgba(0, 0, 0, 0.5);
 }
 
-.expense-list__list--li p {
-  margin-bottom: 0.5rem;
-}
-
-.expense-list__list--li ul {
-  list-style: none;
-}
-
-.expense-list__item-heading {
-  font-size: var(--font-size-h5);
-  font-weight: 700;
-  color: var(--color-primary);
-  margin-bottom: 0.7rem;
-}
-
-.expense-list__list--li__heading {
-  font-weight: 700;
+.table__button:hover {
+  border: 1.5px solid var(--color-white);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 0.2rem;
+  box-shadow: 0.2rem 0.2rem 0.3rem 0 rgba(0, 0, 0, 0.5);
 }

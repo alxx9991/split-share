@@ -4,10 +4,12 @@
   width: 100%;
   top: 0;
   left: 0;
-  height: 9rem;
+  height: max-content;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  padding: 0rem 10%;
+  padding: 1.5rem 10% 2rem 10%;
+  gap: 1rem;
   align-items: center;
   z-index: 10;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
@@ -17,6 +19,8 @@
 @media screen and (min-width: 768px) {
   .header {
     padding: 0 15%;
+    flex-direction: row;
+    gap: 0;
   }
   .header h1 {
     font-size: var(--font-size-h2);

@@ -22,7 +22,10 @@ const ExpenseSplitter: React.FC<{
     );
   });
   const splitterClasses =
-    props.isSplitEvenly || !props.amount || props.splitBetween.length === 0
+    props.isSplitEvenly ||
+    !props.amount ||
+    props.splitBetween.length === 0 ||
+    props.amount <= 0
       ? `${classes["expense-splitter"]} ${classes["expense-splitter__unclickable"]}`
       : classes["expense-splitter"];
 
@@ -36,7 +39,9 @@ const ExpenseSplitter: React.FC<{
     <div className={splitterClasses}>
       <h5>Amounts Owing</h5>
       {inputs.length > 0 ? inputs : <p>No one to share between</p>}
-      {props.amount === "" ? <p>No amount entered</p> : null}
+      {props.amount === "" || props.amount <= 0 ? (
+        <p>No amount entered</p>
+      ) : null}
       {props.unallocated && props.amount && props.splitBetween.length > 0 ? (
         <h5 className={classes["expense-splitter__error-text"]}>
           {unallocated_message}

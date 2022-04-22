@@ -40,16 +40,6 @@
   }
 }
 
-@media screen and (min-width: 1200px) {
-  .input {
-    font-size: var(--font-size-h5);
-  }
-
-  .input--checkbox {
-    font-size: var(--font-size-h5);
-  }
-}
-
 .input label {
   font-weight: 700;
   display: block;

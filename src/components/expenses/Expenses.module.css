@@ -2,7 +2,6 @@
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
-  margin: 0 auto;
   height: 20rem;
   align-items: center;
 }

@@ -1,18 +1,18 @@
 .expense-form {
-  width: 80%;
+  width: 60%;
+  min-width: max-content;
+  margin-top: 2rem;
 }
 
 @media screen and (min-width: 768px) {
   .expense-form {
-    min-width: 60rem;
-    width: 70%;
+    width: 55%;
   }
 }
 
 @media screen and (min-width: 1200px) {
   .expense-form {
-    width: 50%;
-    min-width: 80rem;
+    width: 40%;
   }
 }
 
@@ -69,16 +69,6 @@
 
   .expense-form__input {
     width: 85%;
-  }
-}
-
-@media screen and (min-width: 1200px) {
-  .expense-form form {
-    padding: 1rem;
-  }
-
-  .expense-form__input {
-    font-size: var(--font-size-h5);
   }
 }
 

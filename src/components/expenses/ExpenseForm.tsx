@@ -333,6 +333,7 @@ const formReducer: Reducer<FormState, FormAction> = (
         newState.sharedBetween.sharedBetweenValid = false;
         newState.sharedBetween.enteredSharedBetween = [];
         newState.userSplit.userSplit = [];
+        newState.formState.formShowing = false;
       }
       break;
 
@@ -402,12 +403,14 @@ const ExpenseForm = () => {
         payload: {},
       });
     } else {
+      //Dispatch action to clear form
       dispatchFormState({
         type: FormActionType.SUBMIT_EXPENSE,
         payload: {
           valid: entireFormValid,
         },
       });
+
       //Dispatch redux action to add expense
       if (entireFormValid) {
         const sanitizedUserSplit: UserSplit[] = [];
@@ -419,7 +422,7 @@ const ExpenseForm = () => {
         const expense: Expense = {
           id: uuidv4(),
           name: formState.expenseName.enteredExpenseName,
-          date: formState.date.enteredDate,
+          date: formState.date.enteredDate.split("-").reverse().join("-"),
           paidBy: formState.paidBy.enteredPaidBy!.value,
           splitBetween: sanitizedUserSplit,
           amount: formState.amount.enteredAmount as number,
@@ -584,7 +587,10 @@ const ExpenseForm = () => {
 
   let unallocated: number | string;
 
-  if (typeof formState.amount.enteredAmount === "number") {
+  if (
+    typeof formState.amount.enteredAmount === "number" &&
+    formState.amount.enteredAmount > 0
+  ) {
     unallocated = parseFloat(
       (
         formState.amount.enteredAmount -

@@ -12,7 +12,7 @@ const initialExpensesState: { expenses: Expense[] } = {
         ["kevin", 4],
       ],
       paidBy: "alex",
-      date: "date1",
+      date: "01-04-2022",
     },
     {
       id: uuidv4(),
@@ -24,7 +24,7 @@ const initialExpensesState: { expenses: Expense[] } = {
         ["kevin", 50],
       ],
       paidBy: "anna",
-      date: "date2",
+      date: "02-04-2022",
     },
     {
       id: uuidv4(),
@@ -36,7 +36,7 @@ const initialExpensesState: { expenses: Expense[] } = {
         ["kevin", 125],
       ],
       paidBy: "anna",
-      date: "date3",
+      date: "03-04-2022",
     },
   ],
 };
@@ -47,6 +47,17 @@ const expenseSlice = createSlice({
   reducers: {
     addExpenseReducer(state, payload) {
       state.expenses.unshift(payload.payload.expense);
+      return state;
+    },
+    removeExpenseReducer(state, payload) {
+      const deleteIndex = state.expenses.findIndex(
+        (expense) => expense.id === payload.payload.id
+      );
+      if (deleteIndex !== -1) {
+        state.expenses.splice(deleteIndex, 1);
+      } else {
+        console.error("Could not find expense to delete");
+      }
       return state;
     },
   },

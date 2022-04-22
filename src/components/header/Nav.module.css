@@ -1,23 +1,7 @@
-.nav {
-  position: relative;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 1.5rem 0;
-}
-
 .nav nav {
-  width: 70%;
-  max-width: 30rem;
-  padding: 1.5rem 0rem;
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
-  background-color: var(--color-tertiary);
-  border-radius: 0.2rem;
-  box-shadow: 0.2rem 0.2rem 0.5rem 0 rgba(0, 0, 0, 0.75);
+  gap: 2rem;
 }
 
 .nav nav a {

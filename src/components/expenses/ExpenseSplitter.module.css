@@ -35,12 +35,6 @@
   color: red;
 }
 
-@media screen and (min-width: 1200px) {
-  .expense-splitter h5 {
-    font-size: var(--font-size-h5);
-  }
-}
-
 .expense-splitter input {
   font: inherit;
   padding: 1rem;

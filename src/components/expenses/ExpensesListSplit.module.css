@@ -1,0 +1,23 @@
+.user-split {
+  border-collapse: collapse;
+  box-shadow: 0.1rem 0.1rem 0.5rem 0 rgba(0, 0, 0, 0.25);
+  background-color: var(--color-white);
+  border-radius: 0.2rem;
+}
+
+.user-split {
+  font-size: 1.3rem;
+}
+
+.user-split td,
+.user-split th {
+  background-color: transparent;
+  padding: 0.5rem;
+}
+
+.user-split td:first-child {
+  text-align: left;
+}
+.user-split td:last-child {
+  text-align: right;
+}

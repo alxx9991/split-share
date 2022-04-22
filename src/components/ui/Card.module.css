@@ -4,4 +4,5 @@
   border-radius: 0.2rem;
   position: relative;
   box-shadow: 0.2rem 0.2rem 0.75rem 0 rgba(0, 0, 0, 0.5);
+  width: 100%;
 }
