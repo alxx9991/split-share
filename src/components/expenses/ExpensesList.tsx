@@ -1,11 +1,23 @@
 import Card from "../ui/Card";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../store";
 import classes from "./ExpensesList.module.css";
 import ExpensesListSplit from "./ExpensesListSplit";
 import { expenseActions } from "../../store/expenseReducer";
+import Select from "react-select";
+import { cloneDeep } from "lodash";
+import { StylesConfig } from "react-select";
 
 const ExpensesList = () => {
+  //Hooks
+  const [sortBy, setSortBy] = useState({
+    label: "Date Latest First",
+    value: "Date Latest First",
+  });
+
+  const [filterBy, setFilterBy] = useState("");
+
   const expensesList = useSelector(
     (state: RootState) => state.expenses.expenses
   );
@@ -16,11 +28,188 @@ const ExpensesList = () => {
     dispatch(expenseActions.removeExpenseReducer({ id }));
   };
 
-  const tableRows = expensesList.map((expense: Expense) => {
+  //Generate sort options
+  const sortOptionStrings: string[] = [
+    "Date Latest First",
+    "Date Earliest First",
+    "Name A-Z",
+    "Name Z-A",
+    "Lowest Amount First",
+    "Highest Amount First",
+    "Paid By A-Z",
+    "Paid By Z-A",
+  ];
+
+  const sortOptions: { label: string; value: string }[] = [];
+
+  for (let optionString of sortOptionStrings) {
+    sortOptions.push({ label: optionString, value: optionString });
+  }
+
+  //Select styling
+  const styles: StylesConfig = {
+    control: (provided: any, state: any) => {
+      return {
+        ...provided,
+        border: "1px solid #ccc",
+        boxShadow: state.isFocused ? "0 0 0 1px var(--color-primary)" : "none",
+        "&:hover": {
+          boxShadow: "0 0 0 1px var(--color-primary)",
+          border: "1px solid var(--color-primary)",
+        },
+      };
+    },
+  };
+
+  //Clone expenses list so we are not modifying the original
+  let localExpensesList = cloneDeep(expensesList);
+
+  //Sort table rows based on selected option
+  switch (sortBy.value) {
+    case "Name A-Z":
+      localExpensesList.sort((a, b) => {
+        if (a.name.toLowerCase() < b.name.toLowerCase()) {
+          return -1;
+        }
+        if (a.name.toLowerCase() > b.name.toLowerCase()) {
+          return 1;
+        }
+        return 0;
+      });
+      break;
+
+    case "Name Z-A":
+      localExpensesList.sort((a, b) => {
+        if (a.name.toLowerCase() > b.name.toLowerCase()) {
+          return -1;
+        }
+        if (a.name.toLowerCase() < b.name.toLowerCase()) {
+          return 1;
+        }
+        return 0;
+      });
+      break;
+
+    case "Date Earliest First":
+      localExpensesList.sort((a, b) => {
+        const [aYear, aMonth, aDay] = a.date
+          .split("-")
+          .map((str) => parseInt(str));
+        const [bYear, bMonth, bDay] = b.date
+          .split("-")
+          .map((str) => parseInt(str));
+        const aDate = new Date(aYear, aMonth - 1, aDay);
+        const bDate = new Date(bYear, bMonth - 1, bDay);
+        if (aDate < bDate) {
+          return -1;
+        }
+        if (aDate > bDate) {
+          return 1;
+        }
+        return 0;
+      });
+      break;
+
+    case "Date Latest First":
+      localExpensesList.sort((a, b) => {
+        const [aYear, aMonth, aDay] = a.date
+          .split("-")
+          .map((str) => parseInt(str));
+        const [bYear, bMonth, bDay] = b.date
+          .split("-")
+          .map((str) => parseInt(str));
+        const aDate = new Date(aYear, aMonth - 1, aDay);
+        const bDate = new Date(bYear, bMonth - 1, bDay);
+        if (aDate < bDate) {
+          return 1;
+        }
+        if (aDate > bDate) {
+          return -1;
+        }
+        return 0;
+      });
+      break;
+
+    case "Lowest Amount First":
+      localExpensesList.sort((a, b) => {
+        if (a.amount < b.amount) {
+          return -1;
+        }
+        if (a.amount > b.amount) {
+          return 1;
+        }
+        return 0;
+      });
+      break;
+
+    case "Highest Amount First":
+      localExpensesList.sort((a, b) => {
+        if (a.amount < b.amount) {
+          return 1;
+        }
+        if (a.amount > b.amount) {
+          return -1;
+        }
+        return 0;
+      });
+      break;
+
+    case "Paid By A-Z":
+      localExpensesList.sort((a, b) => {
+        if (a.paidBy.toLowerCase() < b.paidBy.toLowerCase()) {
+          return -1;
+        }
+        if (a.paidBy.toLowerCase() > b.paidBy.toLowerCase()) {
+          return 1;
+        }
+        return 0;
+      });
+      break;
+
+    case "Paid By Z-A":
+      localExpensesList.sort((a, b) => {
+        if (a.paidBy.toLowerCase() > b.paidBy.toLowerCase()) {
+          return -1;
+        }
+        if (a.paidBy.toLowerCase() < b.paidBy.toLowerCase()) {
+          return 1;
+        }
+        return 0;
+      });
+      break;
+
+    default:
+      console.error("Invalid sort option");
+      break;
+  }
+
+  //Filter local expenses list based on filter text
+  if (filterBy !== "") {
+    localExpensesList = localExpensesList.filter((expense) => {
+      if (expense.amount.toString().includes(filterBy)) {
+        return true;
+      }
+      if (expense.name.includes(filterBy)) {
+        return true;
+      }
+
+      if (expense.date.includes(filterBy)) {
+        return true;
+      }
+
+      if (expense.paidBy.includes(filterBy)) {
+        return true;
+      }
+
+      return false;
+    });
+  }
+
+  const tableRows = localExpensesList.map((expense: Expense) => {
     return (
       <tr key={expense.id} className={classes.table__tr}>
-        <td className={classes.table__td}>{expense.name}</td>
         <td className={classes.table__td}>{expense.date}</td>
+        <td className={classes.table__td}>{expense.name}</td>
         <td className={classes.table__td}>${expense.amount}</td>
         <td className={classes.table__td}>{expense.paidBy}</td>
         <td className={classes.table__td}>
@@ -45,29 +234,66 @@ const ExpensesList = () => {
     );
   });
 
+  const sortByChangeHandler = (option: any) => {
+    setSortBy(option!);
+  };
+
+  const searchChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterBy(event.target.value);
+  };
+
   return (
     <div className={classes["expense-list"]}>
       <Card>
-        <h2>Expense List</h2>
-        {tableRows.length > 0 ? (
-          <div className={classes.table__container}>
-            <table className={classes.table}>
-              <thead>
-                <tr className={classes.table__tr}>
-                  <th className={classes.table__th}>Expense Name</th>
-                  <th className={classes.table__th}>Date</th>
-                  <th className={classes.table__th}>Amount</th>
-                  <th className={classes.table__th}>Paid By</th>
-                  <th className={classes.table__th}>Shared Between</th>
-                  <th className={classes.table__th}>Delete</th>
-                </tr>
-              </thead>
-              <tbody>{tableRows}</tbody>
-            </table>
-          </div>
-        ) : (
-          <p>No expenses added yet.</p>
-        )}
+        <div className={classes["expense-list__inner"]}>
+          <h2>Expense List</h2>
+          {expensesList.length > 0 ? (
+            <>
+              <div className={classes["filter-container"]}>
+                <div className={classes["search-container"]}>
+                  <label htmlFor="search">Search</label>
+                  <input
+                    type="text"
+                    placeholder="Search"
+                    onChange={searchChangeHandler}
+                  />
+                </div>
+                <div className={classes["select-container"]}>
+                  <label htmlFor="sort-by">Sort By</label>
+                  <Select
+                    options={sortOptions}
+                    value={sortBy}
+                    styles={styles}
+                    onChange={(option) => {
+                      sortByChangeHandler(option);
+                    }}
+                  ></Select>
+                </div>
+              </div>
+              {localExpensesList.length > 0 ? (
+                <div className={classes.table__container}>
+                  <table className={classes.table}>
+                    <thead>
+                      <tr className={classes.table__tr}>
+                        <th className={classes.table__th}>Date</th>
+                        <th className={classes.table__th}>Expense Name</th>
+                        <th className={classes.table__th}>Amount</th>
+                        <th className={classes.table__th}>Paid By</th>
+                        <th className={classes.table__th}>Shared Between</th>
+                        <th className={classes.table__th}>Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody>{tableRows}</tbody>
+                  </table>
+                </div>
+              ) : (
+                <p>No expenses matching search found.</p>
+              )}
+            </>
+          ) : (
+            <p>No expenses added yet.</p>
+          )}
+        </div>
       </Card>
     </div>
   );

@@ -24,6 +24,8 @@ html {
   --font-size-h5: 125%;
 
   font-size: 54.5%;
+
+  overflow-y: scroll;
 }
 
 @media screen and (min-width: 768px) {

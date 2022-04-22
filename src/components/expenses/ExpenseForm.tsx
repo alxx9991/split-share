@@ -419,6 +419,18 @@ const ExpenseForm = () => {
             sanitizedUserSplit.push(user);
           }
         }
+
+        for (let user of userList) {
+          //If user is not in sanitized user split, add that user with amount 0
+          if (
+            sanitizedUserSplit.find((userInSplit) => {
+              return user.name === userInSplit[0];
+            }) === undefined
+          ) {
+            sanitizedUserSplit.push([user.name, 0]);
+          }
+        }
+
         const expense: Expense = {
           id: uuidv4(),
           name: formState.expenseName.enteredExpenseName,

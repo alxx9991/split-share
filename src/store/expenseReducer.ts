@@ -10,6 +10,7 @@ const initialExpensesState: { expenses: Expense[] } = {
       splitBetween: [
         ["alex", 6],
         ["kevin", 4],
+        ["anna", 0],
       ],
       paidBy: "alex",
       date: "01-04-2022",

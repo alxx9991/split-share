@@ -15,6 +15,12 @@
   padding: 0.5rem;
 }
 
+.user-split th:last-child,
+.user-split td:last-child {
+  width: 7rem;
+  text-align: right;
+}
+
 .user-split td:first-child {
   text-align: left;
 }
