@@ -5,13 +5,13 @@ const CustomSelect: React.FC<{
   userList: User[];
   isClearable?: boolean;
   isMulti?: boolean;
-  onChange: any;
-  onBlur: (event: any) => void;
-  errorText: string;
-  valid: boolean;
+  onChange?: any;
+  onBlur?: (event: any) => void;
+  errorText?: string;
+  valid?: boolean;
   id: string;
   label: string;
-  value: any;
+  value?: any;
 }> = (props) => {
   const styles: StylesConfig = {
     control: (provided: any, state: any) => {
@@ -35,6 +35,12 @@ const CustomSelect: React.FC<{
           boxShadow: "0 0 0 1px var(--color-primary)",
           border: "1px solid var(--color-primary)",
         },
+      };
+    },
+    valueContainer: (provided: any, state: any) => {
+      return {
+        ...provided,
+        width: "20rem",
       };
     },
   };

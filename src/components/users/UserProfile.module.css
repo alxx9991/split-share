@@ -1,0 +1,95 @@
+.user-profile {
+  background-color: var(--color-white);
+  width: 100%;
+  padding: 1.5rem;
+  box-shadow: 0.2rem 0.2rem 0.5rem 0 rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.user-profile__contents {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  margin-top: 0.5rem;
+}
+
+.user-profile__contents form {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.payment-details-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.payment-details-edit label {
+  font-weight: 700;
+}
+
+.payment-details-edit textarea {
+  border-radius: 0.4rem;
+  border: 1px solid #ccc;
+  height: 15rem;
+  padding: 0.8rem;
+  width: 100%;
+}
+
+.payment-details-edit textarea:focus {
+  outline: 1px solid var(--color-primary);
+}
+
+.user-profile h5 {
+  font-size: 1.6rem;
+}
+
+.user-profile button {
+  padding: 1rem 0;
+  width: 10rem;
+  border: none;
+  box-shadow: 0.1rem 0.1rem 0.5rem 0 rgba(0, 0, 0, 0.25);
+  background-color: var(--color-primary);
+  border-radius: 0.4rem;
+  border: 2px solid transparent;
+}
+
+.user-profile button:hover {
+  border: 2px solid white;
+  color: var(--color-white);
+}
+
+.user-profile .inactive-button {
+  background-color: #ccc;
+}
+
+.user-profile .inactive-button:hover {
+  border: inherit;
+  color: inherit;
+}
+
+.user-profile__buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  color: red;
+  margin-top: -1rem;
+}
+
+.error-container .error-button {
+  background-color: #ffcccb;
+}
+
+.error-container .error-button:hover {
+  border: 2px solid black;
+  color: black;
+}

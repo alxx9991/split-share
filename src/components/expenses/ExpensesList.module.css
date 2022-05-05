@@ -1,6 +1,6 @@
 .expense-list {
   margin-top: 2rem;
-  width: 80%;
+  width: 95%;
 }
 
 .expense-list__inner {
@@ -8,7 +8,7 @@
   flex-direction: column;
   align-items: center;
   gap: 3rem;
-  width: 85%;
+  width: 95%;
   margin: 0 auto;
 }
 
@@ -20,6 +20,8 @@
 @media screen and (min-width: 768px) {
   .expense-list {
     width: 60%;
+    min-width: 80rem;
+    max-width: 100rem;
   }
 }
 
@@ -119,7 +121,22 @@
 
 .filter-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
+  gap: 1rem;
   width: 100%;
+}
+
+@media screen and (min-width: 768px) {
+  .filter-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    gap: 0;
+  }
+}
+
+.no-expenses {
+  margin-top: -1rem;
 }

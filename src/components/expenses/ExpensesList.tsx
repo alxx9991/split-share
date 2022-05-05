@@ -1,5 +1,5 @@
 import Card from "../ui/Card";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../store";
 import classes from "./ExpensesList.module.css";
@@ -8,6 +8,21 @@ import { expenseActions } from "../../store/expenseReducer";
 import Select from "react-select";
 import { cloneDeep } from "lodash";
 import { StylesConfig } from "react-select";
+
+//Select styling
+const styles: StylesConfig = {
+  control: (provided: any, state: any) => {
+    return {
+      ...provided,
+      border: "1px solid #ccc",
+      boxShadow: state.isFocused ? "0 0 0 1px var(--color-primary)" : "none",
+      "&:hover": {
+        boxShadow: "0 0 0 1px var(--color-primary)",
+        border: "1px solid var(--color-primary)",
+      },
+    };
+  },
+};
 
 const ExpensesList = () => {
   //Hooks
@@ -24,20 +39,25 @@ const ExpensesList = () => {
 
   const dispatch = useDispatch();
 
+  //Handlers
   const deleteButtonClickHandler = (id: string) => {
     dispatch(expenseActions.removeExpenseReducer({ id }));
+  };
+
+  const sortByChangeHandler = (option: any) => {
+    setSortBy(option!);
+  };
+
+  const searchChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterBy(event.target.value);
   };
 
   //Generate sort options
   const sortOptionStrings: string[] = [
     "Date Latest First",
     "Date Earliest First",
-    "Name A-Z",
-    "Name Z-A",
     "Lowest Amount First",
     "Highest Amount First",
-    "Paid By A-Z",
-    "Paid By Z-A",
   ];
 
   const sortOptions: { label: string; value: string }[] = [];
@@ -45,21 +65,6 @@ const ExpensesList = () => {
   for (let optionString of sortOptionStrings) {
     sortOptions.push({ label: optionString, value: optionString });
   }
-
-  //Select styling
-  const styles: StylesConfig = {
-    control: (provided: any, state: any) => {
-      return {
-        ...provided,
-        border: "1px solid #ccc",
-        boxShadow: state.isFocused ? "0 0 0 1px var(--color-primary)" : "none",
-        "&:hover": {
-          boxShadow: "0 0 0 1px var(--color-primary)",
-          border: "1px solid var(--color-primary)",
-        },
-      };
-    },
-  };
 
   //Clone expenses list so we are not modifying the original
   let localExpensesList = cloneDeep(expensesList);
@@ -234,14 +239,6 @@ const ExpensesList = () => {
     );
   });
 
-  const sortByChangeHandler = (option: any) => {
-    setSortBy(option!);
-  };
-
-  const searchChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFilterBy(event.target.value);
-  };
-
   return (
     <div className={classes["expense-list"]}>
       <Card>
@@ -291,7 +288,7 @@ const ExpensesList = () => {
               )}
             </>
           ) : (
-            <p>No expenses added yet.</p>
+            <p className={classes["no-expenses"]}>No expenses added yet.</p>
           )}
         </div>
       </Card>

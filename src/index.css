@@ -8,6 +8,7 @@
 }
 
 html {
+  --color-primary-dark: #3f5996;
   --color-primary: #abc4ff;
   --color-secondary: #c1d3fe;
   --color-tertiary: #edf2fb;
@@ -42,6 +43,7 @@ html {
 
 body {
   font-size: 1.6rem;
+  line-height: 2rem;
   font-family: "Inter", sans-serif;
   font-weight: 400;
   background-color: var(--color-grey);
