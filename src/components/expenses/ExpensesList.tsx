@@ -288,7 +288,7 @@ const ExpensesList = () => {
               )}
             </>
           ) : (
-            <p className={classes["no-expenses"]}>No expenses added yet.</p>
+            <p className={classes["no-expenses"]}>No expenses added yet</p>
           )}
         </div>
       </Card>

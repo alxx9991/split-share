@@ -1,0 +1,18 @@
+.create-expenses {
+  display: flex;
+  flex-direction: column;
+  max-width: 70rem;
+  margin: 2rem auto 0 auto;
+  width: 80%;
+}
+
+.create-expenses__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.bold {
+  font-weight: 700;
+}

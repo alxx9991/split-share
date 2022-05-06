@@ -3,11 +3,11 @@ import { createSlice } from "@reduxjs/toolkit";
 const globalSlice = createSlice({
   name: "global",
   initialState: {
-    activePage: "expenses",
+    docID: "",
   },
   reducers: {
-    changeActivePageReducer(state, payload) {
-      state.activePage = payload.payload.page;
+    changedocumentIDReducer(state, payload) {
+      state.docID = payload.payload.docID;
       return state;
     },
   },
