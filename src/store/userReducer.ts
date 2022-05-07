@@ -41,6 +41,9 @@ const userSlice = createSlice({
         console.error("Could not find user to delete");
       }
     },
+    setUsersReducer: (state, action) => {
+      state.users = action.payload.users;
+    },
   },
 });
 

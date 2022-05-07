@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-// import { v4 as uuidv4 } from "uuid";
 
 const initialExpensesState: { expenses: Expense[] } = {
   expenses: [] as Expense[],
@@ -47,39 +46,38 @@ const expenseSlice = createSlice({
   name: "expenses",
   initialState: initialExpensesState,
   reducers: {
-    addExpenseReducer(state, payload) {
-      state.expenses.unshift(payload.payload.expense);
-      return state;
+    addExpenseReducer(state, action) {
+      state.expenses.unshift(action.payload.expense);
     },
-    removeExpenseReducer(state, payload) {
+    removeExpenseReducer(state, action) {
       const deleteIndex = state.expenses.findIndex(
-        (expense) => expense.id === payload.payload.id
+        (expense) => expense.id === action.payload.id
       );
       if (deleteIndex !== -1) {
         state.expenses.splice(deleteIndex, 1);
       } else {
         console.error("Could not find expense to delete");
       }
-      return state;
     },
-    changeUserExpenseReducer(state, payload) {
+    changeUserExpenseReducer(state, action) {
       state.expenses.forEach((expense) => {
-        if (expense.paidBy === payload.payload.oldName) {
-          expense.paidBy = payload.payload.newName;
+        if (expense.paidBy === action.payload.oldName) {
+          expense.paidBy = action.payload.newName;
         }
         expense.splitBetween.forEach((user) => {
-          if (user[0] === payload.payload.oldName) {
-            user[0] = payload.payload.newName;
+          if (user[0] === action.payload.oldName) {
+            user[0] = action.payload.newName;
           }
         });
       });
-      return state;
     },
-    addUserExpenseReducer(state, payload) {
+    addUserExpenseReducer(state, action) {
       state.expenses.forEach((expense) => {
-        expense.splitBetween.push([payload.payload.name, 0]);
+        expense.splitBetween.push([action.payload.name, 0]);
       });
-      return state;
+    },
+    setExpensesReducer(state, action) {
+      state.expenses = action.payload.expenses;
     },
   },
 });

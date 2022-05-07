@@ -8,6 +8,12 @@ import { expenseActions } from "../../store/expenseReducer";
 import Select from "react-select";
 import { cloneDeep } from "lodash";
 import { StylesConfig } from "react-select";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import useHTTP from "../../hooks/useHTTP";
+import { globalActions } from "../../store/globalReducer";
+import { userActions } from "../../store/userReducer";
+import { v4 as uuidv4 } from "uuid";
 
 //Select styling
 const styles: StylesConfig = {
@@ -25,6 +31,70 @@ const styles: StylesConfig = {
 };
 
 const ExpensesList = () => {
+  const params = useParams();
+  const existingDocID = useSelector((state: RootState) => state.global.docID);
+
+  const { isLoading, setIsLoading, error, setError, get, post } = useHTTP();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    //Attempt to fetch the document
+    get(
+      `https://split-share-89844-default-rtdb.asia-southeast1.firebasedatabase.app/documents/${params.docID}.json`
+    )
+      .then((res) => {
+        console.log(res);
+        setIsLoading(false);
+        //If we cannot find the document, set error
+        if (!res.data) {
+          setError(
+            "Error 404: Resource not found, please check that the URL is correct."
+          );
+        } else {
+          //Else, switch documents to the new document
+          //Set the global doc id
+          dispatch(
+            globalActions.changedocumentIDReducer({ docID: params.docID })
+          );
+          //Set the expenses
+          dispatch(
+            expenseActions.setExpensesReducer({
+              expenses: res.data.expenses ? res.data.expenses : [],
+            })
+          );
+
+          //Set the users
+          dispatch(
+            userActions.setUsersReducer({
+              users: res.data.users
+                ? res.data.users
+                : [
+                    {
+                      id: uuidv4(),
+                      name: "alex",
+                      paymentDetails: "Beem: @alxx9991",
+                    },
+                    {
+                      id: uuidv4(),
+                      name: "anna",
+                      paymentDetails: "Beem: @aznna",
+                    },
+                    {
+                      id: uuidv4(),
+                      name: "kevin",
+                      paymentDetails: "Beem: @kevinnli",
+                    },
+                  ],
+            })
+          );
+        }
+      })
+      .catch((err) => {
+        setError(err);
+        setIsLoading(false);
+        console.error(err);
+      });
+  }, [get, params.docID, existingDocID, setIsLoading, setError, dispatch]);
+
   //Hooks
   const [sortBy, setSortBy] = useState({
     label: "Date Latest First",
@@ -36,8 +106,6 @@ const ExpensesList = () => {
   const expensesList = useSelector(
     (state: RootState) => state.expenses.expenses
   );
-
-  const dispatch = useDispatch();
 
   //Handlers
   const deleteButtonClickHandler = (id: string) => {
@@ -244,7 +312,11 @@ const ExpensesList = () => {
       <Card>
         <div className={classes["expense-list__inner"]}>
           <h2>Expense List</h2>
-          {expensesList.length > 0 ? (
+          {isLoading ? (
+            <p className={classes["no-expenses"]}>Loading expenses...</p>
+          ) : error ? (
+            <p className={classes["no-expenses"]}>{error}</p>
+          ) : expensesList.length > 0 ? (
             <>
               <div className={classes["filter-container"]}>
                 <div className={classes["search-container"]}>

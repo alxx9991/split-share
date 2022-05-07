@@ -8,7 +8,6 @@ import { RootState } from "../../store";
 const Nav = () => {
   const location = useLocation();
   const docID = useSelector((state: RootState) => state.global.docID);
-  console.log(docID);
 
   return (
     <div className={classes.nav}>

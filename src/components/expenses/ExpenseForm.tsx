@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { RootState } from "../../store";
 import { expenseActions } from "../../store/expenseReducer";
+import useHTTP from "../../hooks/useHTTP";
 
 import Card from "../ui/Card";
 import Button from "../ui/Button";
@@ -31,6 +32,7 @@ enum FormActionType {
   SHOW_FORM,
   HIDE_FORM,
   SUBMIT_EXPENSE,
+  FAILED_SUBMIT_EXPENSE,
 }
 
 type FormAction = {
@@ -307,34 +309,34 @@ const formReducer: Reducer<FormState, FormAction> = (
       newState.formState.formShowing = false;
       break;
 
+    case FormActionType.FAILED_SUBMIT_EXPENSE:
+      //Touch all fields
+      newState.expenseName.expenseNameTouched = true;
+      newState.date.dateTouched = true;
+      newState.paidBy.paidByTouched = true;
+      newState.sharedBetween.sharedBetweenTouched = true;
+      newState.amount.amountTouched = true;
+      break;
+
     case FormActionType.SUBMIT_EXPENSE:
-      if (!action.payload.valid) {
-        //Touch all fields
-        newState.expenseName.expenseNameTouched = true;
-        newState.date.dateTouched = true;
-        newState.paidBy.paidByTouched = true;
-        newState.sharedBetween.sharedBetweenTouched = true;
-        newState.amount.amountTouched = true;
-      } else {
-        //Clear all fields
-        newState.expenseName.expenseNameTouched = false;
-        newState.expenseName.expenseNameValid = false;
-        newState.expenseName.enteredExpenseName = "";
-        newState.amount.amountTouched = false;
-        newState.amount.amountValid = false;
-        newState.amount.enteredAmount = "";
-        newState.date.dateTouched = false;
-        newState.date.dateValid = false;
-        newState.date.enteredDate = "";
-        newState.paidBy.paidByTouched = false;
-        newState.paidBy.paidByValid = false;
-        newState.paidBy.enteredPaidBy = null;
-        newState.sharedBetween.sharedBetweenTouched = false;
-        newState.sharedBetween.sharedBetweenValid = false;
-        newState.sharedBetween.enteredSharedBetween = [];
-        newState.userSplit.userSplit = [];
-        newState.formState.formShowing = false;
-      }
+      //Clear all fields
+      newState.expenseName.expenseNameTouched = false;
+      newState.expenseName.expenseNameValid = false;
+      newState.expenseName.enteredExpenseName = "";
+      newState.amount.amountTouched = false;
+      newState.amount.amountValid = false;
+      newState.amount.enteredAmount = "";
+      newState.date.dateTouched = false;
+      newState.date.dateValid = false;
+      newState.date.enteredDate = "";
+      newState.paidBy.paidByTouched = false;
+      newState.paidBy.paidByValid = false;
+      newState.paidBy.enteredPaidBy = null;
+      newState.sharedBetween.sharedBetweenTouched = false;
+      newState.sharedBetween.sharedBetweenValid = false;
+      newState.sharedBetween.enteredSharedBetween = [];
+      newState.userSplit.userSplit = [];
+      newState.formState.formShowing = false;
       break;
 
     default:
@@ -391,57 +393,80 @@ const ExpenseForm = () => {
 
   const amountInputRef = useRef<HTMLInputElement>(null);
   const userList = useSelector((state: RootState) => state.users.users);
+  const { isLoading, setIsLoading, post, get, error, setError } = useHTTP();
 
   //Handlers
   const addExpenseClickHandler: React.MouseEventHandler<HTMLButtonElement> = (
     event
   ) => {
     event.preventDefault();
+
+    //If form is not showing, then show the form
     if (!formState.formState.formShowing) {
       dispatchFormState({
         type: FormActionType.SHOW_FORM,
         payload: {},
       });
-    } else {
-      //Dispatch action to clear form
+      return;
+    }
+
+    //If the form is not valid, then dispatch the failed submit action
+    if (!entireFormValid) {
       dispatchFormState({
-        type: FormActionType.SUBMIT_EXPENSE,
-        payload: {
-          valid: entireFormValid,
-        },
+        type: FormActionType.FAILED_SUBMIT_EXPENSE,
+        payload: {},
       });
+      return;
+    }
 
-      //Dispatch redux action to add expense
-      if (entireFormValid) {
-        const sanitizedUserSplit: UserSplit[] = [];
-        for (let user of formState.userSplit.userSplit) {
-          if (typeof user[1] === "number") {
-            sanitizedUserSplit.push(user);
-          }
-        }
-
-        for (let user of userList) {
-          //If user is not in sanitized user split, add that user with amount 0
-          if (
-            sanitizedUserSplit.find((userInSplit) => {
-              return user.name === userInSplit[0];
-            }) === undefined
-          ) {
-            sanitizedUserSplit.push([user.name, 0]);
-          }
-        }
-
-        const expense: Expense = {
-          id: uuidv4(),
-          name: formState.expenseName.enteredExpenseName,
-          date: formState.date.enteredDate.split("-").reverse().join("-"),
-          paidBy: formState.paidBy.enteredPaidBy!.value,
-          splitBetween: sanitizedUserSplit,
-          amount: formState.amount.enteredAmount as number,
-        };
-        dispatch(expenseActions.addExpenseReducer({ expense }));
+    //Attempt to send the data to the server
+    const sanitizedUserSplit: UserSplit[] = [];
+    for (let user of formState.userSplit.userSplit) {
+      if (typeof user[1] === "number") {
+        sanitizedUserSplit.push(user);
       }
     }
+
+    for (let user of userList) {
+      //If user is not in sanitized user split, add that user with amount 0
+      if (
+        sanitizedUserSplit.find((userInSplit) => {
+          return user.name === userInSplit[0];
+        }) === undefined
+      ) {
+        sanitizedUserSplit.push([user.name, 0]);
+      }
+    }
+
+    const expense: Expense = {
+      id: uuidv4(),
+      name: formState.expenseName.enteredExpenseName,
+      date: formState.date.enteredDate.split("-").reverse().join("-"),
+      paidBy: formState.paidBy.enteredPaidBy!.value,
+      splitBetween: sanitizedUserSplit,
+      amount: formState.amount.enteredAmount as number,
+    };
+
+    post(
+      "https://split-share-89844-default-rtdb.asia-southeast1.firebasedatabase.app/documents/-N1Rakmx45ffugn0ymdi/data/expenses.json",
+      expense
+    )
+      .then(() => {
+        dispatch(expenseActions.addExpenseReducer({ expense }));
+        //Dispatch action to clear form
+        dispatchFormState({
+          type: FormActionType.SUBMIT_EXPENSE,
+          payload: {
+            valid: entireFormValid,
+          },
+        });
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        console.error(error);
+        setIsLoading(false);
+      });
   };
 
   const cancelButtonClickHandler: React.MouseEventHandler<HTMLButtonElement> = (
