@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
@@ -38,30 +38,33 @@ const useFetchData = () => {
     setFetchIsLoading(false);
 
     return res;
-  }, []);
+  }, [docID, fetchError]);
 
   //Pulls data off the cloud and updates the local store, and optionall you can change the selected user
-  const syncData = useCallback(async (selectedUser?: User | null) => {
-    const res = await getData();
-    setFetchError(null);
-    if (res === null) {
-      setFetchError("Document does not exist");
-      console.error("Document does not exist");
-      return null;
-    }
+  const syncData = useCallback(
+    async (selectedUser?: User | null) => {
+      const res = await getData();
+      setFetchError(null);
+      if (res === null) {
+        setFetchError("Document does not exist");
+        console.error("Document does not exist");
+        return null;
+      }
 
-    if (res === undefined) {
-      setFetchError("Failed to fetch data");
-      console.error("Failed to fetch data");
-      return null;
-    }
+      if (res === undefined) {
+        setFetchError("Failed to fetch data");
+        console.error("Failed to fetch data");
+        return null;
+      }
 
-    dispatch(userActions.setUsersReducer({ users: res.users, selectedUser }));
-    dispatch(expenseActions.setExpensesReducer({ expenses: res.expenses }));
-    dispatch(globalActions.setDocIDReducer({ docID }));
+      dispatch(userActions.setUsersReducer({ users: res.users, selectedUser }));
+      dispatch(expenseActions.setExpensesReducer({ expenses: res.expenses }));
+      dispatch(globalActions.setDocIDReducer({ docID }));
 
-    return res;
-  }, []);
+      return res;
+    },
+    [docID, dispatch, getData]
+  );
   return { fetchIsLoading, fetchError, getData, syncData };
 };
 

@@ -1,17 +1,19 @@
-import classes from "./UserProfile.module.css";
+import classes from "./styles/UserProfile.module.css";
 import Input from "../ui/Input";
-import { FormState } from "./UserInfo";
+import { UserFormState } from "../../hooks/userFormHooks/useUserFormReducer";
 import React from "react";
 
 const UserProfile: React.FC<{
-  formState: FormState;
+  formState: UserFormState;
   handlers: {
-    nameInputChangedHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    nameInputBlurHandler: (e: React.FocusEvent<HTMLInputElement>) => void;
+    editNameInputChangedHandler: (
+      e: React.ChangeEvent<HTMLInputElement>
+    ) => void;
+    editNameInputBlurHandler: (e: React.FocusEvent<HTMLInputElement>) => void;
     paymentDetailsInputChangedHandler: (
       e: React.ChangeEvent<HTMLInputElement>
     ) => void;
-    cancelClickHandler: React.MouseEventHandler<HTMLButtonElement>;
+    cancelEditClickHandler: React.MouseEventHandler<HTMLButtonElement>;
     saveClickHandler: React.MouseEventHandler<HTMLButtonElement>;
     editButtonClickHandler: React.MouseEventHandler<HTMLButtonElement>;
     deleteButtonClickHandler: React.MouseEventHandler<HTMLButtonElement>;
@@ -25,15 +27,15 @@ const UserProfile: React.FC<{
     <div className={classes["user-profile"]}>
       <h2>Profile</h2>
       <div className={classes["user-profile__contents"]}>
-        {props.formState.isEditing ? (
+        {props.formState.formState.formShowing ? (
           <form>
             <Input
               label={"Edit Name"}
               attributes={{
                 type: "text",
                 value: props.formState.name.enteredName,
-                onChange: props.handlers.nameInputChangedHandler,
-                onBlur: props.handlers.nameInputBlurHandler,
+                onChange: props.handlers.editNameInputChangedHandler,
+                onBlur: props.handlers.editNameInputBlurHandler,
               }}
               valid={props.nameInputValid}
               errorMessage={props.formState.name.errorMessage}
@@ -49,7 +51,10 @@ const UserProfile: React.FC<{
               valid={true}
             ></Input>
             <div className={classes["user-profile__buttons"]}>
-              <button onClick={props.handlers.cancelClickHandler} type="button">
+              <button
+                onClick={props.handlers.cancelEditClickHandler}
+                type="button"
+              >
                 Cancel
               </button>
               <button onClick={props.handlers.saveClickHandler}>Save</button>
@@ -78,7 +83,7 @@ const UserProfile: React.FC<{
                 Delete
               </button>
             </div>
-            {props.formState.deleteError && (
+            {props.formState.formState.deleteError && (
               <div className={classes["error-container"]}>
                 <p>
                   Error: The current user is involved in existing expenses and

@@ -1,13 +1,11 @@
 import Select from "react-select";
-import classes from "./UserBreakdown.module.css";
+import classes from "./styles/UserBreakdown.module.css";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { useState } from "react";
 import ExpensesListSplit from "../expenses/ExpensesListSplit";
-import { useDispatch } from "react-redux";
 import { StylesConfig } from "react-select";
 import useUpdateData from "../../hooks/useUpdateData";
-import { useParams } from "react-router-dom";
 import { UpdateType } from "../../enums/updateType";
 
 //Select styling
@@ -36,8 +34,7 @@ const UserBreakdown: React.FC<{ selectedUser: User }> = (props) => {
   }
 
   const [paidByShowing, setPaidByShowing] = useState(true);
-  const dispatch = useDispatch();
-  const params = useParams();
+
   const filteredExpenseList = expenseList.filter((expense) => {
     if (paidByShowing) {
       return expense.paidBy === props.selectedUser.name;

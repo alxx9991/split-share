@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
-import classes from "./UserSummary.module.css";
+import classes from "./styles/UserSummary.module.css";
 
 const UserSummary: React.FC<{ currentUser: User }> = (props) => {
   const users = useSelector((state: RootState) =>
