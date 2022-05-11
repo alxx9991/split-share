@@ -2,7 +2,7 @@ import Card from "../ui/Card";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
-import classes from "./ExpensesList.module.css";
+import classes from "./styles/ExpensesList.module.css";
 import ExpensesListSplit from "./ExpensesListSplit";
 import Select from "react-select";
 import { StylesConfig } from "react-select";

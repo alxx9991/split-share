@@ -1,4 +1,4 @@
-import classes from "./Expenses.module.css";
+import classes from "./styles/Expenses.module.css";
 import ExpenseForm from "./ExpenseForm";
 import ExpensesList from "./ExpensesList";
 import useFetchData from "../../hooks/useFetchData";
@@ -9,7 +9,7 @@ const Expenses = () => {
   const { syncData, fetchIsLoading, fetchError } = useFetchData();
   useEffect(() => {
     syncData();
-  }, []);
+  }, [syncData]);
 
   return (
     <div className={classes.expenses}>

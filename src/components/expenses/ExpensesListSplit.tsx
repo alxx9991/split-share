@@ -1,4 +1,4 @@
-import classes from "./ExpensesListSplit.module.css";
+import classes from "./styles/ExpensesListSplit.module.css";
 
 const ExpensesListSplit: React.FC<{ splitBetween: UserSplit[] }> = (props) => {
   return (

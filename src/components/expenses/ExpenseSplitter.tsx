@@ -1,4 +1,4 @@
-import classes from "./ExpenseSplitter.module.css";
+import classes from "./styles/ExpenseSplitter.module.css";
 
 const ExpenseSplitter: React.FC<{
   splitBetween: UserSplit[];
