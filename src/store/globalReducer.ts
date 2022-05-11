@@ -6,7 +6,7 @@ const globalSlice = createSlice({
     docID: "",
   },
   reducers: {
-    changedocumentIDReducer(state, payload) {
+    setDocIDReducer(state, payload) {
       state.docID = payload.payload.docID;
       return state;
     },

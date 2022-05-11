@@ -14,16 +14,10 @@ function App() {
         <Header></Header>
         <Routes>
           <Route path="/" element={<CreateExpenses></CreateExpenses>}></Route>
-          <Route
-            path="/expenses"
-            element={<CreateExpenses></CreateExpenses>}
-          ></Route>
+          <Route path="/expenses/" element={<Expenses />}></Route>
           <Route path="/expenses/:docID" element={<Expenses />}></Route>
-          <Route
-            path="users"
-            element={<CreateExpenses></CreateExpenses>}
-          ></Route>
           <Route path="/users/:docID" element={<Users />}></Route>
+          <Route path="/users/" element={<Users />}></Route>
         </Routes>
       </div>
     </Provider>

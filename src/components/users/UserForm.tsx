@@ -6,9 +6,9 @@ import { cloneDeep } from "lodash";
 import Input from "../ui/Input";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store";
-import { userActions } from "../../store/userReducer";
-import { expenseActions } from "../../store/expenseReducer";
-import { v4 as uuidv4 } from "uuid";
+import useUpdateData from "../../hooks/useUpdateData";
+import { useParams } from "react-router-dom";
+import { UpdateType } from "../../enums/updateType";
 
 enum FormActionType {
   SHOW_FORM,
@@ -141,15 +141,21 @@ const UserForm: React.FC = () => {
     initialFormState
   );
 
+  const { updateDataReducer } = useUpdateData();
+
+  const params = useParams();
+
+  const docID = params.docID;
+
   const dispatch = useDispatch();
 
   const existingNames = useSelector((state: RootState) => {
-    return state.users.users.map((user) => user.name);
+    return Object.values(state.users.users).map((user) => user.name);
   });
 
-  const addUserClickHandler: React.MouseEventHandler<HTMLButtonElement> = (
-    event
-  ) => {
+  const addUserClickHandler: React.MouseEventHandler<
+    HTMLButtonElement
+  > = async (event) => {
     event.preventDefault();
     if (formState.formState.formShowing) {
       //Recheck form validity
@@ -164,26 +170,37 @@ const UserForm: React.FC = () => {
         });
         return;
       }
-      //If valid, submit the form
-      dispatchFormState({ type: FormActionType.SUBMIT_FORM });
+      const newUser: User = {
+        name: formState.name.enteredName,
+        paymentDetails: formState.paymentDetails.enteredPaymentDetails,
+      };
+
+      const addUserSuccess = await updateDataReducer(UpdateType.ADD_USER, {
+        user: newUser,
+      });
+
+      //If added user successfully, dispatch form state
+      if (addUserSuccess) {
+        dispatchFormState({ type: FormActionType.SUBMIT_FORM });
+      }
     } else {
       dispatchFormState({ type: FormActionType.SHOW_FORM });
     }
 
     //If form valid, dispatch the redux action to add the user
     if (formState.name.nameValid) {
-      dispatch(
-        userActions.addUser({
-          id: uuidv4(),
-          name: formState.name.enteredName,
-          paymentDetails: formState.paymentDetails.enteredPaymentDetails,
-        })
-      );
-      dispatch(
-        expenseActions.addUserExpenseReducer({
-          name: formState.name.enteredName,
-        })
-      );
+      // dispatch(
+      //   userActions.addUser({
+      //     id: uuidv4(),
+      //     name: formState.name.enteredName,
+      //     paymentDetails: formState.paymentDetails.enteredPaymentDetails,
+      //   })
+      // );
+      // dispatch(
+      //   expenseActions.addUserExpenseReducer({
+      //     name: formState.name.enteredName,
+      //   })
+      // );
     }
   };
 

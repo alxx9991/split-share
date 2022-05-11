@@ -1,8 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
-// import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 
 const userInitialState = {
-  users: [] as User[],
+  users: {
+    user1: { id: uuidv4(), name: "alex", paymentDetails: "Beem: @alxx9991" },
+    user2: { id: uuidv4(), name: "anna", paymentDetails: "Beem: @aznna" },
+    user3: { id: uuidv4(), name: "kevin", paymentDetails: "Beem: @kevinnli" },
+  } as { [key: string]: User },
+  selectedUser: null as User | null,
 };
 
 //Demo users
@@ -16,33 +21,14 @@ const userSlice = createSlice({
   name: "users",
   initialState: userInitialState,
   reducers: {
-    addUser: (state, action) => {
-      state.users.push(action.payload);
-    },
-    editUser: (state, action) => {
-      const user = state.users.find(
-        (user) => user.name === action.payload.currentName
-      );
-      if (user) {
-        console.log(action.payload);
-        user.name = action.payload.name;
-        user.paymentDetails = action.payload.paymentDetails;
-      } else {
-        console.error("User not found");
-      }
-    },
-    removeUser: (state, action) => {
-      const deleteIndex = state.users.findIndex(
-        (user) => user.name === action.payload.name
-      );
-      if (deleteIndex !== -1) {
-        state.users.splice(deleteIndex, 1);
-      } else {
-        console.error("Could not find user to delete");
-      }
-    },
     setUsersReducer: (state, action) => {
       state.users = action.payload.users;
+      if (action.payload.selectedUser !== undefined) {
+        state.selectedUser = action.payload.selectedUser;
+      }
+    },
+    setSelectedUserReducer: (state, action) => {
+      state.selectedUser = action.payload.selectedUser;
     },
   },
 });

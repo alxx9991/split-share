@@ -6,8 +6,6 @@ import { cloneDeep } from "lodash";
 import { v4 as uuidv4 } from "uuid";
 
 import { RootState } from "../../store";
-import { expenseActions } from "../../store/expenseReducer";
-import useHTTP from "../../hooks/useHTTP";
 
 import Card from "../ui/Card";
 import Button from "../ui/Button";
@@ -15,6 +13,8 @@ import Input from "../ui/Input";
 import Checkbox from "../ui/Checkbox";
 import Select from "../ui/Select";
 import ExpenseSplitter from "./ExpenseSplitter";
+import useUpdateData from "../../hooks/useUpdateData";
+import { UpdateType } from "../../enums/updateType";
 
 enum FormActionType {
   SET_SPLIT_EVENLY,
@@ -389,16 +389,23 @@ const ExpenseForm = () => {
     formReducer,
     initialFormState
   );
-  const dispatch = useDispatch();
+
+  const {
+    isLoading: updateIsLoading,
+    setIsLoading: setUpdateIsLoading,
+    error: updateError,
+    updateDataReducer,
+  } = useUpdateData();
 
   const amountInputRef = useRef<HTMLInputElement>(null);
-  const userList = useSelector((state: RootState) => state.users.users);
-  const { isLoading, setIsLoading, post, get, error, setError } = useHTTP();
+  const userList = useSelector((state: RootState) =>
+    Object.values(state.users.users)
+  );
 
   //Handlers
-  const addExpenseClickHandler: React.MouseEventHandler<HTMLButtonElement> = (
-    event
-  ) => {
+  const addExpenseClickHandler: React.MouseEventHandler<
+    HTMLButtonElement
+  > = async (event) => {
     event.preventDefault();
 
     //If form is not showing, then show the form
@@ -447,26 +454,14 @@ const ExpenseForm = () => {
       amount: formState.amount.enteredAmount as number,
     };
 
-    post(
-      "https://split-share-89844-default-rtdb.asia-southeast1.firebasedatabase.app/documents/-N1Rakmx45ffugn0ymdi/data/expenses.json",
-      expense
-    )
-      .then(() => {
-        dispatch(expenseActions.addExpenseReducer({ expense }));
-        //Dispatch action to clear form
-        dispatchFormState({
-          type: FormActionType.SUBMIT_EXPENSE,
-          payload: {
-            valid: entireFormValid,
-          },
-        });
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        setError(error);
-        console.error(error);
-        setIsLoading(false);
-      });
+    const addSuccessful = await updateDataReducer(UpdateType.ADD_EXPENSE, {
+      expense,
+    });
+
+    if (addSuccessful) {
+      dispatchFormState({ type: FormActionType.SUBMIT_EXPENSE, payload: {} });
+    }
+    setUpdateIsLoading(false);
   };
 
   const cancelButtonClickHandler: React.MouseEventHandler<HTMLButtonElement> = (
@@ -748,14 +743,25 @@ const ExpenseForm = () => {
               <Button onClick={cancelButtonClickHandler}>Cancel</Button>
             )}
             <Button
-              onClick={addExpenseClickHandler}
+              onClick={
+                false
+                  ? (e) => {
+                      e.preventDefault();
+                    }
+                  : addExpenseClickHandler
+              }
               inactive={
-                formState.formState.formShowing && !entireFormValid
+                (formState.formState.formShowing && !entireFormValid) ||
+                updateIsLoading
                   ? true
                   : false
               }
             >
-              Add Expense
+              {updateIsLoading
+                ? "Adding..."
+                : updateError
+                ? "Failed. Retry?"
+                : "Add Expense"}
             </Button>
           </div>
         </form>

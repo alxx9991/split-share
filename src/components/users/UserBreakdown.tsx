@@ -5,8 +5,10 @@ import { RootState } from "../../store";
 import { useState } from "react";
 import ExpensesListSplit from "../expenses/ExpensesListSplit";
 import { useDispatch } from "react-redux";
-import { expenseActions } from "../../store/expenseReducer";
 import { StylesConfig } from "react-select";
+import useUpdateData from "../../hooks/useUpdateData";
+import { useParams } from "react-router-dom";
+import { UpdateType } from "../../enums/updateType";
 
 //Select styling
 const styles: StylesConfig = {
@@ -25,10 +27,18 @@ const styles: StylesConfig = {
 
 const UserBreakdown: React.FC<{ selectedUser: User }> = (props) => {
   const expenses = useSelector((state: RootState) => state.expenses.expenses);
+  const { updateDataReducer } = useUpdateData();
+
+  let expenseList: Expense[] = [];
+
+  for (let expense of Object.values(expenses)) {
+    expenseList.push(expense);
+  }
+
   const [paidByShowing, setPaidByShowing] = useState(true);
   const dispatch = useDispatch();
-
-  const filteredExpenseList = expenses.filter((expense) => {
+  const params = useParams();
+  const filteredExpenseList = expenseList.filter((expense) => {
     if (paidByShowing) {
       return expense.paidBy === props.selectedUser.name;
     } else {
@@ -43,7 +53,7 @@ const UserBreakdown: React.FC<{ selectedUser: User }> = (props) => {
 
   //Handlers
   const deleteButtonClickHandler = (id: string) => {
-    dispatch(expenseActions.removeExpenseReducer({ id }));
+    updateDataReducer(UpdateType.DELETE_EXPENSE, { expenseID: id });
   };
 
   const filterChangeHandler = (option: { label: string; value: string }) => {

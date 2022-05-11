@@ -3,8 +3,16 @@ import { RootState } from "../../store";
 import classes from "./UserSummary.module.css";
 
 const UserSummary: React.FC<{ currentUser: User }> = (props) => {
-  const users = useSelector((state: RootState) => state.users.users);
+  const users = useSelector((state: RootState) =>
+    Object.values(state.users.users)
+  );
+
   const expenses = useSelector((state: RootState) => state.expenses.expenses);
+  let expenseList: Expense[] = [];
+  for (let expense of Object.values(expenses)) {
+    expenseList.push(expense);
+  }
+
   const balances = {} as { [key: string]: number };
 
   const paymentDetails = {} as { [key: string]: string };
@@ -21,7 +29,7 @@ const UserSummary: React.FC<{ currentUser: User }> = (props) => {
     balances[user.name] = 0;
 
     //Look at each expense and either add or subtract from the balance, depending on if the current user paid or not.
-    expenses.forEach((expense) => {
+    expenseList.forEach((expense) => {
       //If the current user paid for the balance, add to the balance
       if (expense.paidBy === props.currentUser.name) {
         expense.splitBetween.forEach((split) => {

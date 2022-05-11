@@ -4,30 +4,25 @@ import { globalActions } from "../../store/globalReducer";
 import { useNavigate } from "react-router-dom";
 import Card from "../ui/Card";
 import classes from "./CreateExpenses.module.css";
-import useHTTP from "../../hooks/useHTTP";
+import useUpdateData from "../../hooks/useUpdateData";
 import { v4 as uuidv4 } from "uuid";
 
 const CreateExpenses = () => {
   const navigate = useNavigate();
 
-  const { isLoading, setIsLoading, error, setError, get, post } = useHTTP();
+  const { isLoading, setIsLoading, error, setError, addDocument } =
+    useUpdateData();
 
   const createDocumentClickHandler = async () => {
-    post(
-      "https://split-share-89844-default-rtdb.asia-southeast1.firebasedatabase.app/documents.json",
-      {
-        data: { key: uuidv4(), expenses: [], users: [] },
-      }
-    )
+    const docID = uuidv4();
+    addDocument(docID)
       .then((res) => {
-        dispatch(
-          globalActions.changedocumentIDReducer({ docID: res.data.name })
-        );
-        navigate(`/users/${res.data.name}`);
+        dispatch(globalActions.setDocIDReducer({ docID }));
+        navigate(`/users/${docID}`);
         setIsLoading(false);
         console.log(res);
       })
-      .catch((err) => {
+      .catch((err: any) => {
         setError(err);
         setIsLoading(false);
         console.error(err);

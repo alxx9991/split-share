@@ -1,19 +1,13 @@
 import Card from "../ui/Card";
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import classes from "./ExpensesList.module.css";
 import ExpensesListSplit from "./ExpensesListSplit";
-import { expenseActions } from "../../store/expenseReducer";
 import Select from "react-select";
-import { cloneDeep } from "lodash";
 import { StylesConfig } from "react-select";
-import { useEffect } from "react";
-import { useParams } from "react-router-dom";
-import useHTTP from "../../hooks/useHTTP";
-import { globalActions } from "../../store/globalReducer";
-import { userActions } from "../../store/userReducer";
-import { v4 as uuidv4 } from "uuid";
+import useUpdateData from "../../hooks/useUpdateData";
+import { UpdateType } from "../../enums/updateType";
 
 //Select styling
 const styles: StylesConfig = {
@@ -31,69 +25,9 @@ const styles: StylesConfig = {
 };
 
 const ExpensesList = () => {
-  const params = useParams();
-  const existingDocID = useSelector((state: RootState) => state.global.docID);
+  const [loadingDelete, setLoadingDelete] = useState("");
 
-  const { isLoading, setIsLoading, error, setError, get, post } = useHTTP();
-  const dispatch = useDispatch();
-  useEffect(() => {
-    //Attempt to fetch the document
-    get(
-      `https://split-share-89844-default-rtdb.asia-southeast1.firebasedatabase.app/documents/${params.docID}.json`
-    )
-      .then((res) => {
-        console.log(res);
-        setIsLoading(false);
-        //If we cannot find the document, set error
-        if (!res.data) {
-          setError(
-            "Error 404: Resource not found, please check that the URL is correct."
-          );
-        } else {
-          //Else, switch documents to the new document
-          //Set the global doc id
-          dispatch(
-            globalActions.changedocumentIDReducer({ docID: params.docID })
-          );
-          //Set the expenses
-          dispatch(
-            expenseActions.setExpensesReducer({
-              expenses: res.data.expenses ? res.data.expenses : [],
-            })
-          );
-
-          //Set the users
-          dispatch(
-            userActions.setUsersReducer({
-              users: res.data.users
-                ? res.data.users
-                : [
-                    {
-                      id: uuidv4(),
-                      name: "alex",
-                      paymentDetails: "Beem: @alxx9991",
-                    },
-                    {
-                      id: uuidv4(),
-                      name: "anna",
-                      paymentDetails: "Beem: @aznna",
-                    },
-                    {
-                      id: uuidv4(),
-                      name: "kevin",
-                      paymentDetails: "Beem: @kevinnli",
-                    },
-                  ],
-            })
-          );
-        }
-      })
-      .catch((err) => {
-        setError(err);
-        setIsLoading(false);
-        console.error(err);
-      });
-  }, [get, params.docID, existingDocID, setIsLoading, setError, dispatch]);
+  const { updateDataReducer } = useUpdateData();
 
   //Hooks
   const [sortBy, setSortBy] = useState({
@@ -103,13 +37,13 @@ const ExpensesList = () => {
 
   const [filterBy, setFilterBy] = useState("");
 
-  const expensesList = useSelector(
-    (state: RootState) => state.expenses.expenses
-  );
+  const expenses = useSelector((state: RootState) => state.expenses.expenses);
 
   //Handlers
-  const deleteButtonClickHandler = (id: string) => {
-    dispatch(expenseActions.removeExpenseReducer({ id }));
+  const deleteButtonClickHandler = async (id: string) => {
+    setLoadingDelete(id);
+    await updateDataReducer(UpdateType.DELETE_EXPENSE, { expenseID: id });
+    setLoadingDelete("");
   };
 
   const sortByChangeHandler = (option: any) => {
@@ -134,13 +68,17 @@ const ExpensesList = () => {
     sortOptions.push({ label: optionString, value: optionString });
   }
 
-  //Clone expenses list so we are not modifying the original
-  let localExpensesList = cloneDeep(expensesList);
+  //Generate list of expenses from expenses object
+  let expensesList: Expense[] = [];
+
+  for (let expense of Object.values(expenses)) {
+    expensesList.push(expense);
+  }
 
   //Sort table rows based on selected option
   switch (sortBy.value) {
     case "Name A-Z":
-      localExpensesList.sort((a, b) => {
+      expensesList.sort((a, b) => {
         if (a.name.toLowerCase() < b.name.toLowerCase()) {
           return -1;
         }
@@ -152,7 +90,7 @@ const ExpensesList = () => {
       break;
 
     case "Name Z-A":
-      localExpensesList.sort((a, b) => {
+      expensesList.sort((a, b) => {
         if (a.name.toLowerCase() > b.name.toLowerCase()) {
           return -1;
         }
@@ -164,7 +102,7 @@ const ExpensesList = () => {
       break;
 
     case "Date Earliest First":
-      localExpensesList.sort((a, b) => {
+      expensesList.sort((a, b) => {
         const [aYear, aMonth, aDay] = a.date
           .split("-")
           .map((str) => parseInt(str));
@@ -184,7 +122,7 @@ const ExpensesList = () => {
       break;
 
     case "Date Latest First":
-      localExpensesList.sort((a, b) => {
+      expensesList.sort((a, b) => {
         const [aYear, aMonth, aDay] = a.date
           .split("-")
           .map((str) => parseInt(str));
@@ -204,7 +142,7 @@ const ExpensesList = () => {
       break;
 
     case "Lowest Amount First":
-      localExpensesList.sort((a, b) => {
+      expensesList.sort((a, b) => {
         if (a.amount < b.amount) {
           return -1;
         }
@@ -216,7 +154,7 @@ const ExpensesList = () => {
       break;
 
     case "Highest Amount First":
-      localExpensesList.sort((a, b) => {
+      expensesList.sort((a, b) => {
         if (a.amount < b.amount) {
           return 1;
         }
@@ -228,7 +166,7 @@ const ExpensesList = () => {
       break;
 
     case "Paid By A-Z":
-      localExpensesList.sort((a, b) => {
+      expensesList.sort((a, b) => {
         if (a.paidBy.toLowerCase() < b.paidBy.toLowerCase()) {
           return -1;
         }
@@ -240,7 +178,7 @@ const ExpensesList = () => {
       break;
 
     case "Paid By Z-A":
-      localExpensesList.sort((a, b) => {
+      expensesList.sort((a, b) => {
         if (a.paidBy.toLowerCase() > b.paidBy.toLowerCase()) {
           return -1;
         }
@@ -258,7 +196,7 @@ const ExpensesList = () => {
 
   //Filter local expenses list based on filter text
   if (filterBy !== "") {
-    localExpensesList = localExpensesList.filter((expense) => {
+    expensesList = expensesList.filter((expense) => {
       if (expense.amount.toString().includes(filterBy)) {
         return true;
       }
@@ -278,7 +216,7 @@ const ExpensesList = () => {
     });
   }
 
-  const tableRows = localExpensesList.map((expense: Expense) => {
+  const tableRows = expensesList.map((expense: Expense) => {
     return (
       <tr key={expense.id} className={classes.table__tr}>
         <td className={classes.table__td}>{expense.date}</td>
@@ -292,9 +230,15 @@ const ExpensesList = () => {
         </td>
         <td className={classes.table__td}>
           <button
-            className={classes.table__button}
+            className={
+              loadingDelete === expense.id
+                ? classes["table__button--loading"]
+                : classes.table__button
+            }
             onClick={() => {
-              deleteButtonClickHandler(expense.id);
+              if (loadingDelete !== expense.id) {
+                deleteButtonClickHandler(expense.id);
+              }
             }}
           >
             <img
@@ -312,10 +256,10 @@ const ExpensesList = () => {
       <Card>
         <div className={classes["expense-list__inner"]}>
           <h2>Expense List</h2>
-          {isLoading ? (
+          {false ? (
             <p className={classes["no-expenses"]}>Loading expenses...</p>
-          ) : error ? (
-            <p className={classes["no-expenses"]}>{error}</p>
+          ) : false ? (
+            <p className={classes["no-expenses"]}>{false}</p>
           ) : expensesList.length > 0 ? (
             <>
               <div className={classes["filter-container"]}>
@@ -339,7 +283,7 @@ const ExpensesList = () => {
                   ></Select>
                 </div>
               </div>
-              {localExpensesList.length > 0 ? (
+              {expensesList.length > 0 ? (
                 <div className={classes.table__container}>
                   <table className={classes.table}>
                     <thead>

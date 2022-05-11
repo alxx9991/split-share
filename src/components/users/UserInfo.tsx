@@ -6,10 +6,12 @@ import classes from "./UserInfo.module.css";
 import Select from "../ui/Select";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../store";
-import { useState, useReducer } from "react";
+import { useReducer, useEffect } from "react";
 import { cloneDeep } from "lodash";
+import useUpdateData from "../../hooks/useUpdateData";
 import { userActions } from "../../store/userReducer";
-import { expenseActions } from "../../store/expenseReducer";
+import useFetchData from "../../hooks/useFetchData";
+import { UpdateType } from "../../enums/updateType";
 
 enum FormActionType {
   SET_ENTERED_NAME,
@@ -174,17 +176,39 @@ const initialFormState: FormState = {
 };
 
 const UserInfo: React.FC = () => {
-  const [selectedUser, setSelectedUser] = useState<User | null | undefined>(
-    null
+  const { setIsLoading, updateDataReducer } = useUpdateData();
+
+  const { syncData } = useFetchData();
+
+  const docID = useSelector((state: RootState) => state.global.docID);
+  const selectedUser = useSelector(
+    (state: RootState) => state.users.selectedUser
   );
 
-  const users: User[] = useSelector((state: RootState) => state.users.users);
+  const setSelectedUser = (user: User | null) => {
+    dispatch(userActions.setSelectedUserReducer({ selectedUser: user }));
+  };
+
+  useEffect(() => {
+    const getDoc = async () => {
+      //Attempt to fetch the document
+      setIsLoading(true);
+      await syncData();
+      setIsLoading(false);
+    };
+    getDoc();
+  }, [syncData, setIsLoading]);
+
+  const users = useSelector((state: RootState) =>
+    Object.values(state.users.users)
+  );
 
   const existingNames = useSelector((state: RootState) => {
-    return state.users.users.map((user: User) => user.name);
+    return users.map((user: User) => user.name);
   });
 
   const expenses = useSelector((state: RootState) => state.expenses.expenses);
+  const expenseList = Object.values(expenses);
 
   const editButtonClickHandler: React.MouseEventHandler<
     HTMLButtonElement
@@ -216,7 +240,7 @@ const UserInfo: React.FC = () => {
     });
   };
 
-  const saveClickHandler: React.MouseEventHandler<HTMLButtonElement> = (
+  const saveClickHandler: React.MouseEventHandler<HTMLButtonElement> = async (
     event
   ) => {
     event.preventDefault();
@@ -249,29 +273,15 @@ const UserInfo: React.FC = () => {
     });
 
     if (formState.name.nameValid) {
-      //Dispatch redux action to update user details
-      dispatch(
-        userActions.editUser({
-          name: formState.name.enteredName,
-          paymentDetails: formState.paymentDetails.enteredPaymentDetails,
-          currentName: selectedUser?.name,
-        })
-      );
-
-      //Dispatch redux action to update expense list
-      dispatch(
-        expenseActions.changeUserExpenseReducer({
-          oldName: selectedUser?.name,
-          newName: formState.name.enteredName,
-        })
-      );
-
       const newUser: User = {
         name: formState.name.enteredName,
         paymentDetails: formState.paymentDetails.enteredPaymentDetails,
       };
-      //Change the selected user to the new user
-      setSelectedUser(newUser);
+
+      await updateDataReducer(UpdateType.EDIT_USER, {
+        newUser,
+        oldUser: selectedUser,
+      });
 
       //Rerender the form
       dispatchFormState({
@@ -315,7 +325,12 @@ const UserInfo: React.FC = () => {
   const selectChangeHandler = (option: { label: string; value: string }) => {
     //Lookup user by name
     const selectedUser = users.find((user: User) => user.name === option.value);
-    setSelectedUser(selectedUser);
+    if (selectedUser) {
+      setSelectedUser(selectedUser);
+    } else {
+      setSelectedUser(null);
+    }
+
     dispatchFormState({
       type: FormActionType.RENDER_FORM,
       payload: { user: selectedUser },
@@ -325,14 +340,13 @@ const UserInfo: React.FC = () => {
 
   const deleteButtonClickHandler: React.MouseEventHandler<
     HTMLButtonElement
-  > = () => {
+  > = async () => {
     if (!deleteValid) {
       dispatchFormState({ type: FormActionType.SHOW_DELETE_ERROR });
       return;
     }
     //If the user is not involved in any expense, delete the user
-    setSelectedUser(null);
-    dispatch(userActions.removeUser({ name: selectedUser?.name }));
+    await updateDataReducer(UpdateType.DELETE_USER, { user: selectedUser });
   };
 
   const hideDeleteButtonClickHandler: React.MouseEventHandler<
@@ -348,7 +362,7 @@ const UserInfo: React.FC = () => {
   let deleteValid = true;
 
   //Check if the selected user is involved in any expense
-  for (let expense of expenses) {
+  for (let expense of expenseList) {
     if (expense.paidBy === selectedUser?.name) {
       deleteValid = false;
     }
