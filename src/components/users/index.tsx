@@ -3,7 +3,7 @@ import UserInfo from "./UserInfo";
 import classes from "./styles/Users.module.css";
 import { useEffect } from "react";
 import useFetchData from "../../hooks/useFetchData";
-import Card from "../ui/Card";
+import Loading from "../ui/Loading";
 
 const Users = () => {
   const { syncData, fetchIsLoading, fetchError } = useFetchData();
@@ -13,10 +13,13 @@ const Users = () => {
 
   return (
     <div className={classes.users}>
-      {fetchIsLoading ? (
-        <Card>Loading users...</Card>
-      ) : fetchError ? (
-        <Card>{fetchError}</Card>
+      {fetchIsLoading || fetchError ? (
+        <Loading
+          loadingMessage={"Loading users..."}
+          errorMessage={fetchError ? fetchError : ""}
+          syncData={syncData}
+          fetchIsLoading={fetchIsLoading}
+        ></Loading>
       ) : (
         <>
           <UserForm></UserForm>

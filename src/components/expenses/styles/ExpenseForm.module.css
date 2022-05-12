@@ -122,3 +122,9 @@
     gap: 6rem;
   }
 }
+
+.expense-form__update-error-text {
+  color: red;
+  margin-top: 2rem;
+  text-align: center;
+}

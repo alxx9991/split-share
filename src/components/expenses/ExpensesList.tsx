@@ -1,13 +1,10 @@
 import Card from "../ui/Card";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store";
 import classes from "./styles/ExpensesList.module.css";
-import ExpensesListSplit from "./ExpensesListSplit";
+import ExpenseTable from "../ui/ExpenseTable";
 import Select from "react-select";
 import { StylesConfig } from "react-select";
-import useUpdateData from "../../hooks/useUpdateData";
-import { UpdateType } from "../../enums/updateType";
+import useData from "../../hooks/useData";
 
 //Select styling
 const styles: StylesConfig = {
@@ -25,10 +22,6 @@ const styles: StylesConfig = {
 };
 
 const ExpensesList = () => {
-  const [loadingDelete, setLoadingDelete] = useState("");
-
-  const { updateDataReducer } = useUpdateData();
-
   //Hooks
   const [sortBy, setSortBy] = useState({
     label: "Date Latest First",
@@ -37,14 +30,7 @@ const ExpensesList = () => {
 
   const [filterBy, setFilterBy] = useState("");
 
-  const expenses = useSelector((state: RootState) => state.expenses.expenses);
-
-  //Handlers
-  const deleteButtonClickHandler = async (id: string) => {
-    setLoadingDelete(id);
-    await updateDataReducer(UpdateType.DELETE_EXPENSE, { expenseID: id });
-    setLoadingDelete("");
-  };
+  const { expensesList: expenses } = useData();
 
   const sortByChangeHandler = (option: any) => {
     setSortBy(option!);
@@ -71,36 +57,14 @@ const ExpensesList = () => {
   //Generate list of expenses from expenses object
   let expensesList: Expense[] = [];
 
-  for (let expense of Object.values(expenses)) {
-    expensesList.push(expense);
+  if (expenses) {
+    for (let expense of Object.values(expenses)) {
+      expensesList.push(expense);
+    }
   }
 
   //Sort table rows based on selected option
   switch (sortBy.value) {
-    case "Name A-Z":
-      expensesList.sort((a, b) => {
-        if (a.name.toLowerCase() < b.name.toLowerCase()) {
-          return -1;
-        }
-        if (a.name.toLowerCase() > b.name.toLowerCase()) {
-          return 1;
-        }
-        return 0;
-      });
-      break;
-
-    case "Name Z-A":
-      expensesList.sort((a, b) => {
-        if (a.name.toLowerCase() > b.name.toLowerCase()) {
-          return -1;
-        }
-        if (a.name.toLowerCase() < b.name.toLowerCase()) {
-          return 1;
-        }
-        return 0;
-      });
-      break;
-
     case "Date Earliest First":
       expensesList.sort((a, b) => {
         const [aYear, aMonth, aDay] = a.date
@@ -165,30 +129,6 @@ const ExpensesList = () => {
       });
       break;
 
-    case "Paid By A-Z":
-      expensesList.sort((a, b) => {
-        if (a.paidBy.toLowerCase() < b.paidBy.toLowerCase()) {
-          return -1;
-        }
-        if (a.paidBy.toLowerCase() > b.paidBy.toLowerCase()) {
-          return 1;
-        }
-        return 0;
-      });
-      break;
-
-    case "Paid By Z-A":
-      expensesList.sort((a, b) => {
-        if (a.paidBy.toLowerCase() > b.paidBy.toLowerCase()) {
-          return -1;
-        }
-        if (a.paidBy.toLowerCase() < b.paidBy.toLowerCase()) {
-          return 1;
-        }
-        return 0;
-      });
-      break;
-
     default:
       console.error("Invalid sort option");
       break;
@@ -215,41 +155,6 @@ const ExpensesList = () => {
       return false;
     });
   }
-
-  const tableRows = expensesList.map((expense: Expense) => {
-    return (
-      <tr key={expense.id} className={classes.table__tr}>
-        <td className={classes.table__td}>{expense.date}</td>
-        <td className={classes.table__td}>{expense.name}</td>
-        <td className={classes.table__td}>${expense.amount}</td>
-        <td className={classes.table__td}>{expense.paidBy}</td>
-        <td className={classes.table__td}>
-          <ExpensesListSplit
-            splitBetween={expense.splitBetween}
-          ></ExpensesListSplit>
-        </td>
-        <td className={classes.table__td}>
-          <button
-            className={
-              loadingDelete === expense.id
-                ? classes["table__button--loading"]
-                : classes.table__button
-            }
-            onClick={() => {
-              if (loadingDelete !== expense.id) {
-                deleteButtonClickHandler(expense.id);
-              }
-            }}
-          >
-            <img
-              src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMyA2djE4aDE4di0xOGgtMTh6bTUgMTRjMCAuNTUyLS40NDggMS0xIDFzLTEtLjQ0OC0xLTF2LTEwYzAtLjU1Mi40NDgtMSAxLTFzMSAuNDQ4IDEgMXYxMHptNSAwYzAgLjU1Mi0uNDQ4IDEtMSAxcy0xLS40NDgtMS0xdi0xMGMwLS41NTIuNDQ4LTEgMS0xczEgLjQ0OCAxIDF2MTB6bTUgMGMwIC41NTItLjQ0OCAxLTEgMXMtMS0uNDQ4LTEtMXYtMTBjMC0uNTUyLjQ0OC0xIDEtMXMxIC40NDggMSAxdjEwem00LTE4djJoLTIwdi0yaDUuNzExYy45IDAgMS42MzEtMS4wOTkgMS42MzEtMmg1LjMxNWMwIC45MDEuNzMgMiAxLjYzMSAyaDUuNzEyeiIvPjwvc3ZnPg=="
-              alt="trash"
-            />
-          </button>
-        </td>
-      </tr>
-    );
-  });
 
   return (
     <div className={classes["expense-list"]}>
@@ -283,25 +188,7 @@ const ExpensesList = () => {
                   ></Select>
                 </div>
               </div>
-              {expensesList.length > 0 ? (
-                <div className={classes.table__container}>
-                  <table className={classes.table}>
-                    <thead>
-                      <tr className={classes.table__tr}>
-                        <th className={classes.table__th}>Date</th>
-                        <th className={classes.table__th}>Expense Name</th>
-                        <th className={classes.table__th}>Amount</th>
-                        <th className={classes.table__th}>Paid By</th>
-                        <th className={classes.table__th}>Shared Between</th>
-                        <th className={classes.table__th}>Delete</th>
-                      </tr>
-                    </thead>
-                    <tbody>{tableRows}</tbody>
-                  </table>
-                </div>
-              ) : (
-                <p>No expenses matching search found.</p>
-              )}
+              <ExpenseTable expensesList={expensesList}></ExpenseTable>
             </>
           ) : (
             <p className={classes["no-expenses"]}>No expenses added yet</p>

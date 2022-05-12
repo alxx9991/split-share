@@ -48,7 +48,6 @@ const validateName = (
     }
     return -2;
   }
-
   return 0;
 };
 

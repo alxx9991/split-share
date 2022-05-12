@@ -3,7 +3,7 @@ import ExpenseForm from "./ExpenseForm";
 import ExpensesList from "./ExpensesList";
 import useFetchData from "../../hooks/useFetchData";
 import { useEffect } from "react";
-import Card from "../ui/Card";
+import Loading from "../ui/Loading";
 
 const Expenses = () => {
   const { syncData, fetchIsLoading, fetchError } = useFetchData();
@@ -13,10 +13,13 @@ const Expenses = () => {
 
   return (
     <div className={classes.expenses}>
-      {fetchIsLoading ? (
-        <Card>Loading expenses...</Card>
-      ) : fetchError ? (
-        <Card>{fetchError}</Card>
+      {fetchIsLoading || fetchError ? (
+        <Loading
+          loadingMessage={"Loading expenses..."}
+          errorMessage={fetchError ? fetchError : ""}
+          syncData={syncData}
+          fetchIsLoading={fetchIsLoading}
+        ></Loading>
       ) : (
         <>
           <ExpenseForm></ExpenseForm>

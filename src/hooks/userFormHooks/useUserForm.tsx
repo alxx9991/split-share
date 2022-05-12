@@ -1,33 +1,26 @@
 import useUserFormReducer from "./useUserFormReducer";
 import useUpdateData from "../useUpdateData";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store";
 import { UserFormActionType } from "../../enums/UserFormActionType";
 import { UpdateType } from "../../enums/updateType";
 import { useDispatch } from "react-redux";
 import { userActions } from "../../store/userReducer";
+import useData from "../useData";
 
 const useUserForm = () => {
+  //Hooks
   const { formState, dispatchFormState, validateName } = useUserFormReducer();
 
   const dispatch = useDispatch();
 
   const { updateDataReducer } = useUpdateData();
 
-  //User selectors
-  const users = useSelector((state: RootState) =>
-    Object.values(state.users.users)
-  );
-  const selectedUser = useSelector(
-    (state: RootState) => state.users.selectedUser
-  );
-  const existingNames = useSelector((state: RootState) => {
-    return Object.values(state.users.users).map((user) => user.name);
-  });
+  const {
+    usersList: users,
+    expensesList: expenseList,
+    selectedUser,
+  } = useData();
 
-  //Expense selectors
-  const expenses = useSelector((state: RootState) => state.expenses.expenses);
-  const expenseList = Object.values(expenses);
+  const existingNames = users.map((user) => user.name);
 
   const setSelectedUser = (user: User | null) => {
     dispatch(userActions.setSelectedUserReducer({ selectedUser: user }));

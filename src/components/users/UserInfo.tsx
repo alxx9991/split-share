@@ -4,13 +4,14 @@ import UserBreakdown from "./UserBreakdown";
 import Card from "../ui/Card";
 import classes from "./styles/UserInfo.module.css";
 import Select from "../ui/Select";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store";
 import useUserForm from "../../hooks/userFormHooks/useUserForm";
+import useData from "../../hooks/useData";
 
 const UserInfo: React.FC = () => {
   const { handlers, editHandlers, formState, nameInputValid, deleteValid } =
     useUserForm();
+
+  const { usersList: users, selectedUser } = useData();
 
   const { paymentDetailsInputChangedHandler } = handlers;
 
@@ -24,14 +25,6 @@ const UserInfo: React.FC = () => {
     hideDeleteButtonClickHandler,
     selectChangeHandler,
   } = editHandlers;
-
-  //User selectors
-  const users = useSelector((state: RootState) =>
-    Object.values(state.users.users)
-  );
-  const selectedUser = useSelector(
-    (state: RootState) => state.users.selectedUser
-  );
 
   return (
     <div className={classes["user-info"]}>

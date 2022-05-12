@@ -1,5 +1,5 @@
 import Select, { StylesConfig } from "react-select";
-import classes from "./Input.module.css";
+import classes from "./styles/Input.module.css";
 
 const CustomSelect: React.FC<{
   userList: User[];

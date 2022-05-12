@@ -1,17 +1,8 @@
-import { useSelector } from "react-redux";
-import { RootState } from "../../store";
 import classes from "./styles/UserSummary.module.css";
+import useData from "../../hooks/useData";
 
 const UserSummary: React.FC<{ currentUser: User }> = (props) => {
-  const users = useSelector((state: RootState) =>
-    Object.values(state.users.users)
-  );
-
-  const expenses = useSelector((state: RootState) => state.expenses.expenses);
-  let expenseList: Expense[] = [];
-  for (let expense of Object.values(expenses)) {
-    expenseList.push(expense);
-  }
+  const { usersList: users, expensesList: expenseList } = useData();
 
   const balances = {} as { [key: string]: number };
 

@@ -1,11 +1,10 @@
 import axios from "axios";
 import { useState } from "react";
-import { useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import { cloneDeep } from "lodash";
 import useFetchData from "./useFetchData";
-import { RootState } from "../store";
 import { UpdateType } from "../enums/updateType";
+import useData from "./useData";
 
 const BASE_URL =
   "https://split-share-89844-default-rtdb.asia-southeast1.firebasedatabase.app";
@@ -14,8 +13,8 @@ const useUpdateData = () => {
   const [updateIsLoading, setUpdateIsLoading] = useState(false);
   const [updateError, setUpdateError] = useState<any>(null);
   const { fetchIsLoading, getData, syncData, fetchError } = useFetchData();
-  const users = useSelector((state: RootState) => state.users.users);
-  const expenses = useSelector((state: RootState) => state.expenses.expenses);
+
+  const { usersList: users, expensesList: expenses } = useData();
 
   //Retrieves data from database and checks if the data is unchanged. Throws an error if the data is not received, or if the data is changed. Returns cloned version of data
   const verifyData = async () => {
@@ -27,7 +26,7 @@ const useUpdateData = () => {
 
     //If document does not exist, return false
     if (!data) {
-      setUpdateError("Failed to fetch data.");
+      setUpdateError(fetchError ? fetchError : "Document does not exist");
       return null;
     }
 
@@ -98,15 +97,17 @@ const useUpdateData = () => {
         delete users[payload.oldUser.name];
         users[payload.newUser.name] = payload.newUser;
 
-        //Replace user in expenses object
-        for (let expense of Object.values(expenses)) {
-          if (expense.paidBy === payload.oldUser.name) {
-            expense.paidBy = payload.newUser.name;
-          }
-          //Replace user in splitBetween
-          for (let userSplit of expense.splitBetween) {
-            if (userSplit[0] === payload.oldUser.name) {
-              userSplit[0] = payload.newUser.name;
+        if (expenses) {
+          //Replace user in expenses object
+          for (let expense of Object.values(expenses)) {
+            if (expense.paidBy === payload.oldUser.name) {
+              expense.paidBy = payload.newUser.name;
+            }
+            //Replace user in splitBetween
+            for (let userSplit of expense.splitBetween) {
+              if (userSplit[0] === payload.oldUser.name) {
+                userSplit[0] = payload.newUser.name;
+              }
             }
           }
         }
@@ -122,25 +123,27 @@ const useUpdateData = () => {
         //Delete user from users object
         delete users[payload.user.name];
 
-        //Delete user from expenses object
-        for (let expense of Object.values(expenses)) {
-          if (expense.paidBy === payload.user.name) {
-            console.error(
-              "Error detected deleting user, user is still involved in expenses."
-            );
-          }
-          //Delete user from splitBetween
-          const index = expense.splitBetween.findIndex(
-            (userSplit) => userSplit[0] === payload.user.name
-          );
-
-          if (index !== -1) {
-            if (expense.splitBetween[index][1] !== 0) {
+        if (expenses) {
+          //Delete user from expenses object
+          for (let expense of Object.values(expenses)) {
+            if (expense.paidBy === payload.user.name) {
               console.error(
                 "Error detected deleting user, user is still involved in expenses."
               );
             }
-            expense.splitBetween.splice(index, 1);
+            //Delete user from splitBetween
+            const index = expense.splitBetween.findIndex(
+              (userSplit) => userSplit[0] === payload.user.name
+            );
+
+            if (index !== -1) {
+              if (expense.splitBetween[index][1] !== 0) {
+                console.error(
+                  "Error detected deleting user, user is still involved in expenses."
+                );
+              }
+              expense.splitBetween.splice(index, 1);
+            }
           }
         }
 

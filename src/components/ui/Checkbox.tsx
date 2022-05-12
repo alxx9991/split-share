@@ -1,5 +1,5 @@
 import React from "react";
-import classes from "./Input.module.css";
+import classes from "./styles/Input.module.css";
 
 const Checkbox: React.FC<{
   attributes: React.InputHTMLAttributes<HTMLInputElement>;

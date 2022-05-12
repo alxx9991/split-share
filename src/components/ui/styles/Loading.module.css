@@ -1,0 +1,13 @@
+.loading {
+  margin-top: 2rem;
+  width: 50%;
+  min-width: 20rem;
+  text-align: center;
+}
+
+.loading__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+}

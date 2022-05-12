@@ -162,11 +162,16 @@ const ExpenseForm = () => {
               {updateIsLoading
                 ? "Adding..."
                 : updateError
-                ? "Failed. Retry?"
+                ? "Retry?"
                 : "Add Expense"}
             </Button>
           </div>
         </form>
+        {updateError && (
+          <p className={classes["expense-form__update-error-text"]}>
+            Failed to add expense: {updateError}
+          </p>
+        )}
       </Card>
     </div>
   );
