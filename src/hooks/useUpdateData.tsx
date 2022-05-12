@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { cloneDeep } from "lodash";
 import useFetchData from "./useFetchData";
 import { UpdateType } from "../enums/updateType";
-import useData from "./useData";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 const BASE_URL =
   "https://split-share-89844-default-rtdb.asia-southeast1.firebasedatabase.app";
@@ -14,7 +14,10 @@ const useUpdateData = () => {
   const [updateError, setUpdateError] = useState<any>(null);
   const { fetchIsLoading, getData, syncData, fetchError } = useFetchData();
 
-  const { usersList: users, expensesList: expenses } = useData();
+  const localUsers = useSelector((state: RootState) => state.users.users);
+  const localExpenses = useSelector(
+    (state: RootState) => state.expenses.expenses
+  );
 
   //Retrieves data from database and checks if the data is unchanged. Throws an error if the data is not received, or if the data is changed. Returns cloned version of data
   const verifyData = async () => {
@@ -32,15 +35,17 @@ const useUpdateData = () => {
 
     //Verify that the data on the database is the same as the data in the store
     if (
-      JSON.stringify(data.users) !== JSON.stringify(users) ||
-      JSON.stringify(data.expenses) !== JSON.stringify(expenses)
+      JSON.stringify(data.users) !== JSON.stringify(localUsers) ||
+      JSON.stringify(data.expenses) !== JSON.stringify(localExpenses)
     ) {
       setUpdateError("Local data out of sync. Please refresh the page.");
       console.error("Local data out of sync. Please refresh the page.");
+      console.log("Local data:", JSON.stringify(localUsers));
+      console.log("Database data:", JSON.stringify(data.users));
       return null;
     }
 
-    return cloneDeep(data);
+    return data;
   };
 
   //Pushes data to database. Returns the response if worked, otherwise returns null
@@ -65,8 +70,11 @@ const useUpdateData = () => {
     //If new selected user is -1, do not change the selected user.
     let newSelectedUser: User | number | null | undefined = -1;
 
-    const expenses: { [key: string]: Expense } = data.expenses;
-    const users: { [key: string]: User } = data.users;
+    const expenses: { [key: string]: Expense } = data.expenses
+      ? data.expenses
+      : {};
+
+    const users: { [key: string]: User } = data.users ? data.users : {};
 
     //Modify data based on the type
     switch (type) {
@@ -83,8 +91,11 @@ const useUpdateData = () => {
       //}
       case UpdateType.ADD_USER:
         users[payload.user.name] = payload.user;
-        for (let expense of Object.values(expenses)) {
-          expense.splitBetween.push([payload.user.name, 0]);
+
+        if (expenses) {
+          for (let expense of Object.values(expenses)) {
+            expense.splitBetween.push([payload.user.name, 0]);
+          }
         }
         break;
 

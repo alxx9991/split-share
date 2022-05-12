@@ -22,6 +22,8 @@ const UserProfile: React.FC<{
   user: User | null | undefined;
   nameInputValid: boolean;
   deleteValid: boolean;
+  updateLoading: boolean;
+  updateError: string | null;
 }> = (props) => {
   return (
     <div className={classes["user-profile"]}>
@@ -52,13 +54,45 @@ const UserProfile: React.FC<{
             ></Input>
             <div className={classes["user-profile__buttons"]}>
               <button
-                onClick={props.handlers.cancelEditClickHandler}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (props.updateLoading) {
+                    return;
+                  }
+                  props.handlers.cancelEditClickHandler(e);
+                }}
                 type="button"
               >
                 Cancel
               </button>
-              <button onClick={props.handlers.saveClickHandler}>Save</button>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (props.updateLoading) {
+                    return;
+                  }
+                  props.handlers.saveClickHandler(e);
+                }}
+                className={
+                  props.updateError
+                    ? classes["error-button"]
+                    : props.nameInputValid && !props.updateLoading
+                    ? ""
+                    : classes["inactive-button"]
+                }
+              >
+                {props.updateLoading
+                  ? "Saving..."
+                  : props.updateError
+                  ? "Retry?"
+                  : "Save"}
+              </button>
             </div>
+            {props.updateError && (
+              <p className={classes["error-text"]}>
+                Failed to save: {props.updateError}
+              </p>
+            )}
           </form>
         ) : (
           <>
@@ -78,11 +112,26 @@ const UserProfile: React.FC<{
               </button>
               <button
                 onClick={props.handlers.deleteButtonClickHandler}
-                className={props.deleteValid ? "" : classes["inactive-button"]}
+                className={
+                  props.updateError
+                    ? classes["error-button"]
+                    : props.deleteValid && !props.updateLoading
+                    ? ""
+                    : classes["inactive-button"]
+                }
               >
-                Delete
+                {props.updateLoading
+                  ? "Deleting..."
+                  : props.updateError
+                  ? "Retry?"
+                  : "Delete"}
               </button>
             </div>
+            {props.updateError && (
+              <p className={classes["error-text"]}>
+                Failed to save: {props.updateError}
+              </p>
+            )}
             {props.formState.formState.deleteError && (
               <div className={classes["error-container"]}>
                 <p>

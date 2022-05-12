@@ -12,7 +12,13 @@ const useUserForm = () => {
 
   const dispatch = useDispatch();
 
-  const { updateDataReducer } = useUpdateData();
+  const {
+    updateDataReducer,
+    isLoading: updateLoading,
+    setIsLoading: setUpdateIsLoading,
+    error: updateError,
+    setError: setUpdateError,
+  } = useUpdateData();
 
   const {
     usersList: users,
@@ -45,7 +51,9 @@ const useUserForm = () => {
       }
       const newUser: User = {
         name: formState.name.enteredName,
-        paymentDetails: formState.paymentDetails.enteredPaymentDetails,
+        paymentDetails: formState.paymentDetails.enteredPaymentDetails
+          ? formState.paymentDetails.enteredPaymentDetails
+          : "No payment details provided",
       };
 
       const addUserSuccess = await updateDataReducer(UpdateType.ADD_USER, {
@@ -56,6 +64,7 @@ const useUserForm = () => {
       if (addUserSuccess) {
         dispatchFormState({ type: UserFormActionType.SUBMIT_FORM });
       }
+      setUpdateIsLoading(false);
     } else {
       dispatchFormState({ type: UserFormActionType.SHOW_FORM });
     }
@@ -124,38 +133,39 @@ const useUserForm = () => {
   const editButtonClickHandler: React.MouseEventHandler<
     HTMLButtonElement
   > = () => {
+    setUpdateError(null);
     dispatchFormState({ type: UserFormActionType.SHOW_FORM });
+    dispatchFormState({
+      type: UserFormActionType.RENDER_FORM,
+      payload: { user: selectedUser },
+    });
     dispatchFormState({ type: UserFormActionType.HIDE_DELETE_ERROR });
   };
 
   const cancelEditClickHandler: React.MouseEventHandler<
     HTMLButtonElement
   > = () => {
-    dispatchFormState({
-      type: UserFormActionType.SUBMIT_FORM,
-      payload: {
-        default: {
-          name: selectedUser?.name,
-          paymentDetails: selectedUser?.paymentDetails,
-        },
-      },
-    });
+    setUpdateError(null);
     dispatchFormState({
       type: UserFormActionType.RENDER_FORM,
       payload: { user: selectedUser },
     });
+    dispatchFormState({ type: UserFormActionType.HIDE_FORM });
   };
 
   const saveClickHandler: React.MouseEventHandler<HTMLButtonElement> = async (
     event
   ) => {
     event.preventDefault();
+
     //Revalidate Name
     const validateRes = validateName(
       formState.name.enteredName,
       existingNames,
       selectedUser!.name
     );
+
+    //If name is invalid, then set the entered name and return to revalidate
     if (validateRes !== 0) {
       dispatchFormState({
         type: UserFormActionType.SET_ENTERED_NAME,
@@ -168,25 +178,32 @@ const useUserForm = () => {
       return;
     }
 
-    dispatchFormState({
-      type: UserFormActionType.SUBMIT_FORM,
-      payload: {
-        default: {
-          name: selectedUser?.name,
-          paymentDetails: selectedUser?.paymentDetails,
-        },
-      },
-    });
-
     if (formState.name.nameValid) {
       const newUser: User = {
         name: formState.name.enteredName,
-        paymentDetails: formState.paymentDetails.enteredPaymentDetails,
+        paymentDetails: formState.paymentDetails.enteredPaymentDetails
+          ? formState.paymentDetails.enteredPaymentDetails
+          : "No payment details provided",
       };
 
-      await updateDataReducer(UpdateType.EDIT_USER, {
+      const res = await updateDataReducer(UpdateType.EDIT_USER, {
         newUser,
         oldUser: selectedUser,
+      });
+
+      if (!res) {
+        setUpdateIsLoading(false);
+        return;
+      }
+
+      dispatchFormState({
+        type: UserFormActionType.SUBMIT_FORM,
+        payload: {
+          default: {
+            name: selectedUser?.name,
+            paymentDetails: selectedUser?.paymentDetails,
+          },
+        },
       });
 
       //Rerender the form
@@ -194,10 +211,13 @@ const useUserForm = () => {
         type: UserFormActionType.RENDER_FORM,
         payload: { user: newUser },
       });
+
+      setUpdateIsLoading(false);
     }
   };
 
   const selectChangeHandler = (option: { label: string; value: string }) => {
+    setUpdateError(null);
     //Lookup user by name
     const selectedUser = users.find((user: User) => user.name === option.value);
     if (selectedUser) {
@@ -210,6 +230,7 @@ const useUserForm = () => {
       type: UserFormActionType.RENDER_FORM,
       payload: { user: selectedUser },
     });
+    dispatchFormState({ type: UserFormActionType.HIDE_FORM });
     dispatchFormState({ type: UserFormActionType.HIDE_DELETE_ERROR });
   };
 
@@ -222,6 +243,8 @@ const useUserForm = () => {
     }
     //If the user is not involved in any expense, delete the user
     await updateDataReducer(UpdateType.DELETE_USER, { user: selectedUser });
+
+    setUpdateIsLoading(false);
   };
 
   const hideDeleteButtonClickHandler: React.MouseEventHandler<
@@ -267,6 +290,8 @@ const useUserForm = () => {
     formState,
     nameInputValid,
     deleteValid,
+    updateLoading,
+    updateError,
   };
 };
 

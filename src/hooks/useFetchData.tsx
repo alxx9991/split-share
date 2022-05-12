@@ -6,6 +6,8 @@ import { userActions } from "../store/userReducer";
 import { expenseActions } from "../store/expenseReducer";
 import { globalActions } from "../store/globalReducer";
 
+import { cloneDeep } from "lodash";
+
 import axios from "axios";
 const BASE_URL =
   "https://split-share-89844-default-rtdb.asia-southeast1.firebasedatabase.app/";
@@ -38,7 +40,17 @@ const useFetchData = () => {
       });
     setFetchIsLoading(false);
 
-    return res;
+    //Clone the data and clean it up
+    const data = cloneDeep(res);
+
+    if (!data.expenses) {
+      data.expenses = {} as { [key: string]: Expense };
+    }
+    if (!data.users) {
+      data.users = {} as { [key: string]: User };
+    }
+
+    return data;
   }, [docID, dispatch]);
 
   //Pulls data off the cloud and updates the local store, and optionall you can change the selected user

@@ -124,7 +124,6 @@ const formReducer = (state: UserFormState, action: any) => {
 
     //Edit specific form actions
     case UserFormActionType.RENDER_FORM:
-      newState.formState.formShowing = false;
       newState.name.enteredName = action.payload.user.name;
       newState.name.nameTouched = false;
       newState.name.nameValid = true;

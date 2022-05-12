@@ -2,6 +2,14 @@
   width: 60%;
   min-width: max-content;
   margin-top: 2rem;
+  max-width: rem;
+}
+
+.user-form__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
 }
 
 .user-form form {
@@ -56,4 +64,8 @@
 
 .user-form__textarea label {
   font-weight: 700;
+}
+
+.error-text {
+  color: red;
 }

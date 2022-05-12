@@ -89,7 +89,16 @@
   background-color: #ffcccb;
 }
 
+.user-profile__buttons .error-button {
+  background-color: #ffcccb;
+}
+
 .error-container .error-button:hover {
   border: 2px solid black;
   color: black;
+}
+
+.error-text {
+  color: red;
+  margin-top: -1rem;
 }

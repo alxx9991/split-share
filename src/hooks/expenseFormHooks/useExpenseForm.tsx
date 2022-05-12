@@ -1,11 +1,10 @@
 import useExpenseFormReducer from "./useExpenseFormReducer";
 import { useRef } from "react";
-import { useSelector } from "react-redux";
 import useUpdateData from "../useUpdateData";
 import { UpdateType } from "../../enums/updateType";
 import { ExpenseFormActionType } from "../../enums/ExpenseFormActionType";
-import { RootState } from "../../store";
 import { v4 as uuidv4 } from "uuid";
+import useData from "../useData";
 
 const useExpenseFormHandlers = () => {
   //Hooks
@@ -20,9 +19,7 @@ const useExpenseFormHandlers = () => {
 
   const { formState, dispatchFormState } = useExpenseFormReducer();
 
-  const userList = useSelector((state: RootState) =>
-    Object.values(state.users.users)
-  );
+  const { usersList: userList } = useData();
 
   //Validation logic
   const expenseNameInputValid =
@@ -100,17 +97,6 @@ const useExpenseFormHandlers = () => {
     for (let user of formState.userSplit.userSplit) {
       if (typeof user[1] === "number") {
         sanitizedUserSplit.push(user);
-      }
-    }
-
-    for (let user of userList) {
-      //If user is not in sanitized user split, add that user with amount 0
-      if (
-        sanitizedUserSplit.find((userInSplit) => {
-          return user.name === userInSplit[0];
-        }) === undefined
-      ) {
-        sanitizedUserSplit.push([user.name, 0]);
       }
     }
 

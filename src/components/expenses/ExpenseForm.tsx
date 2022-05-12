@@ -158,16 +158,17 @@ const ExpenseForm = () => {
                   ? true
                   : false
               }
+              error={updateError && formState.formState.formShowing}
             >
               {updateIsLoading
                 ? "Adding..."
-                : updateError
+                : updateError && formState.formState.formShowing
                 ? "Retry?"
                 : "Add Expense"}
             </Button>
           </div>
         </form>
-        {updateError && (
+        {updateError && formState.formState.formShowing && (
           <p className={classes["expense-form__update-error-text"]}>
             Failed to add expense: {updateError}
           </p>

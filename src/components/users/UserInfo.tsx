@@ -8,8 +8,15 @@ import useUserForm from "../../hooks/userFormHooks/useUserForm";
 import useData from "../../hooks/useData";
 
 const UserInfo: React.FC = () => {
-  const { handlers, editHandlers, formState, nameInputValid, deleteValid } =
-    useUserForm();
+  const {
+    handlers,
+    editHandlers,
+    formState,
+    nameInputValid,
+    deleteValid,
+    updateLoading,
+    updateError,
+  } = useUserForm();
 
   const { usersList: users, selectedUser } = useData();
 
@@ -68,6 +75,8 @@ const UserInfo: React.FC = () => {
                     nameInputValid={nameInputValid}
                     deleteValid={deleteValid}
                     user={selectedUser}
+                    updateError={updateError}
+                    updateLoading={updateLoading}
                   ></UserProfile>
                   <UserSummary currentUser={selectedUser}></UserSummary>
                   <UserBreakdown selectedUser={selectedUser}></UserBreakdown>

@@ -25,8 +25,12 @@
   color: var(--color-white);
 }
 
-.button--inactive {
+.button--greyed {
   background-color: #ccc;
+}
+
+.button--error {
+  background-color: #ffcccb;
 }
 
 .button--inactive:hover {
