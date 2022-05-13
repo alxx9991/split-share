@@ -1,7 +1,5 @@
 import "./App.css";
 import Header from "./components/header/Header";
-import Expenses from "./components/expenses";
-import Users from "./components/users";
 import { Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store";
