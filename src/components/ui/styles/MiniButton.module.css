@@ -17,11 +17,9 @@
 }
 
 .button:hover {
-  border: 1.5px solid var(--color-white);
-  color: white;
-  padding: 0.5rem;
-  border-radius: 0.2rem;
-  box-shadow: 0.2rem 0.2rem 0.3rem 0 rgba(0, 0, 0, 0.5);
+  background-color: #ccc;
+  transition: all 0.3s;
+  box-shadow: 0.2rem 0.2rem 0.1rem 0px rgba(0, 0, 0, 0.3);
 }
 
 .button--loading:hover {

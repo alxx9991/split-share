@@ -11,19 +11,19 @@
 }
 
 .button:hover {
-  border: 0.3rem solid #444;
-  color: #444;
-  transition: all 0.1s;
+  transition: all 0.3s;
+  background-color: #ccc;
+  box-shadow: 0.2rem 0.2rem 0.1rem 0px rgba(0, 0, 0, 0.3);
 }
 
 .button:active {
   box-shadow: 0.2rem 0.2rem 0.1rem 0px rgba(0, 0, 0, 0.3);
+  background-color: #ccc;
 }
 
 .button--active {
   box-shadow: 0.2rem 0.2rem 0.1rem 0px rgba(0, 0, 0, 0.3);
-  border: 0.3rem solid #444;
-  color: #444;
+  background-color: #ccc;
 }
 
 .button--greyed {
