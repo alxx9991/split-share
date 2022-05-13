@@ -94,8 +94,8 @@ const HomePage = () => {
             <p>Copy this URL to save this list and share with others:</p>
             <Card>
               <a
-                href={`localhost:3000/${docID}`}
-              >{`localhost:3000/${docID}`}</a>
+                href={`https://share-split.netlify.app/${docID}`}
+              >{`https://share-split.netlify.app/${docID}`}</a>
             </Card>
             <p>
               <span className={classes.bold}>IMPORTANT!!</span> Do not lose this
