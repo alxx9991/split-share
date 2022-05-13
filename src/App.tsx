@@ -5,7 +5,7 @@ import Users from "./components/users";
 import { Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store";
-import CreateExpenses from "./components/create";
+import Home from "./components/home";
 
 function App() {
   return (
@@ -13,11 +13,8 @@ function App() {
       <div className="App">
         <Header></Header>
         <Routes>
-          <Route path="/" element={<CreateExpenses></CreateExpenses>}></Route>
-          <Route path="/expenses/" element={<Expenses />}></Route>
-          <Route path="/expenses/:docID" element={<Expenses />}></Route>
-          <Route path="/users/:docID" element={<Users />}></Route>
-          <Route path="/users/" element={<Users />}></Route>
+          <Route path="/*" element={<Home></Home>}></Route>
+          <Route path="/:docID/*" element={<Home></Home>}></Route>
         </Routes>
       </div>
     </Provider>

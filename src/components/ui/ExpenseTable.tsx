@@ -3,6 +3,7 @@ import ExpensesListSplit from "../expenses/ExpensesListSplit";
 import { useState } from "react";
 import useUpdateData from "../../hooks/useUpdateData";
 import { UpdateType } from "../../enums/updateType";
+import MiniButton from "./MiniButton";
 
 const ExpenseTable: React.FC<{
   expensesList: Expense[];
@@ -39,29 +40,22 @@ const ExpenseTable: React.FC<{
         </td>
         <td className={`${classes.table__td} `}>
           <div className={classes.delete_td}>
-            <button
-              className={
+            <MiniButton
+              loading={deletePending === expense.id}
+              error={updateError && deleteErrorId === expense.id}
+              src={
                 deletePending === expense.id
-                  ? classes["table__button--loading"]
-                  : updateError && deleteErrorId === expense.id
-                  ? classes["table__button--error"]
-                  : classes.table__button
+                  ? "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAABmJLR0QA/wD/AP+gvaeTAAAAeElEQVRIie2RMQqAMBAEh7zD1Hm7Ilhb+CMV9ANaGJsjRJSz24Etwk22uAMhhBAviUAP7DkDkP52I7AAh8maZ7bIze0LwzudKXN194qwmTI3N1DneJh/dgMwVYTRvF3dxHVwu44ZaMwHdzdyHXzLaQtFf7tCCCHKnI9xbjyljE9JAAAAAElFTkSuQmCC"
+                  : "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMyA2djE4aDE4di0xOGgtMTh6bTUgMTRjMCAuNTUyLS40NDggMS0xIDFzLTEtLjQ0OC0xLTF2LTEwYzAtLjU1Mi40NDgtMSAxLTFzMSAuNDQ4IDEgMXYxMHptNSAwYzAgLjU1Mi0uNDQ4IDEtMSAxcy0xLS40NDgtMS0xdi0xMGMwLS41NTIuNDQ4LTEgMS0xczEgLjQ0OCAxIDF2MTB6bTUgMGMwIC41NTItLjQ0OCAxLTEgMXMtMS0uNDQ4LTEtMXYtMTBjMC0uNTUyLjQ0OC0xIDEtMXMxIC40NDggMSAxdjEwem00LTE4djJoLTIwdi0yaDUuNzExYy45IDAgMS42MzEtMS4wOTkgMS42MzEtMmg1LjMxNWMwIC45MDEuNzMgMiAxLjYzMSAyaDUuNzEyeiIvPjwvc3ZnPg=="
               }
+              alt={"trash"}
               onClick={() => {
                 if (deletePending !== expense.id) {
                   deleteButtonClickHandler(expense.id);
                 }
               }}
-            >
-              {deletePending === expense.id ? (
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAABmJLR0QA/wD/AP+gvaeTAAAAeElEQVRIie2RMQqAMBAEh7zD1Hm7Ilhb+CMV9ANaGJsjRJSz24Etwk22uAMhhBAviUAP7DkDkP52I7AAh8maZ7bIze0LwzudKXN194qwmTI3N1DneJh/dgMwVYTRvF3dxHVwu44ZaMwHdzdyHXzLaQtFf7tCCCHKnI9xbjyljE9JAAAAAElFTkSuQmCC" />
-              ) : (
-                <img
-                  src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMyA2djE4aDE4di0xOGgtMTh6bTUgMTRjMCAuNTUyLS40NDggMS0xIDFzLTEtLjQ0OC0xLTF2LTEwYzAtLjU1Mi40NDgtMSAxLTFzMSAuNDQ4IDEgMXYxMHptNSAwYzAgLjU1Mi0uNDQ4IDEtMSAxcy0xLS40NDgtMS0xdi0xMGMwLS41NTIuNDQ4LTEgMS0xczEgLjQ0OCAxIDF2MTB6bTUgMGMwIC41NTItLjQ0OCAxLTEgMXMtMS0uNDQ4LTEtMXYtMTBjMC0uNTUyLjQ0OC0xIDEtMXMxIC40NDggMSAxdjEwem00LTE4djJoLTIwdi0yaDUuNzExYy45IDAgMS42MzEtMS4wOTkgMS42MzEtMmg1LjMxNWMwIC45MDEuNzMgMiAxLjYzMSAyaDUuNzEyeiIvPjwvc3ZnPg=="
-                  alt="trash"
-                />
-              )}
-            </button>
+            ></MiniButton>
+
             {updateError && deleteErrorId === expense.id && <p>Retry?</p>}
           </div>
         </td>

@@ -26,7 +26,7 @@ const useFetchData = () => {
     const res: any = await axios
       .get(`${BASE_URL}/documents/${docID}.json`)
       .then((res) => {
-        if (res === null) {
+        if (res.data === null) {
           setFetchError("Document does not exist");
           console.error("Document does not exist");
           setFetchIsLoading(false);
@@ -39,6 +39,10 @@ const useFetchData = () => {
         setFetchError(err.message);
       });
     setFetchIsLoading(false);
+
+    if (res === null) {
+      return;
+    }
 
     //Clone the data and clean it up
     const data = cloneDeep(res);
@@ -69,7 +73,7 @@ const useFetchData = () => {
 
       dispatch(userActions.setUsersReducer({ users: res.users, selectedUser }));
       dispatch(expenseActions.setExpensesReducer({ expenses: res.expenses }));
-
+      dispatch(globalActions.setListNameReducer({ listName: res.listName }));
       return res;
     },
     [dispatch, getData]

@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import useFetchData from "./useFetchData";
 import { UpdateType } from "../enums/updateType";
 import { useSelector } from "react-redux";
@@ -162,6 +161,10 @@ const useUpdateData = () => {
         newSelectedUser = null;
         break;
 
+      case UpdateType.CHANGE_NAME:
+        data.listName = payload.newListName;
+        break;
+
       default:
         console.error("Unknown update type.");
         return null;
@@ -183,11 +186,12 @@ const useUpdateData = () => {
     return sync;
   };
 
-  const addDocument = async (docID: string) => {
+  const addDocument = async (docID: string, listName: string) => {
     return axios.put(`${BASE_URL}/documents/${docID}.json`, {
-      key: uuidv4(),
+      docID,
       expenses: [],
       users: [],
+      listName,
     });
   };
 

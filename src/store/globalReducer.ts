@@ -4,10 +4,15 @@ const globalSlice = createSlice({
   name: "global",
   initialState: {
     docID: "",
+    listName: "",
   },
   reducers: {
-    setDocIDReducer(state, payload) {
-      state.docID = payload.payload.docID;
+    setDocIDReducer(state, action) {
+      state.docID = action.payload.docID;
+      return state;
+    },
+    setListNameReducer(state, action) {
+      state.listName = action.payload.listName;
       return state;
     },
   },

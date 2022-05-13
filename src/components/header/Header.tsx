@@ -5,8 +5,10 @@ const Header = () => {
   return (
     <>
       <header className={classes.header}>
-        <h1>Split Share</h1>
-        <Nav></Nav>
+        <div className={classes["header-content"]}>
+          <h1>Split Share</h1>
+          <Nav></Nav>
+        </div>
       </header>
     </>
   );

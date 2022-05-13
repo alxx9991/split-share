@@ -58,7 +58,8 @@ const UserForm: React.FC = () => {
                 inactive={
                   formState.formState.formShowing && updateLoading
                     ? true
-                    : nameInputValid
+                    : formState.name.nameValid ||
+                      !formState.formState.formShowing
                     ? false
                     : true
                 }

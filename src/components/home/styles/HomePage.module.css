@@ -1,0 +1,58 @@
+.home {
+  width: 60%;
+  margin: 2rem auto;
+}
+
+.home__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.home__header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.home__header button {
+  align-self: flex-end;
+}
+
+.home h2 {
+  font-size: var(--font-size-h3);
+}
+
+.home a {
+  color: inherit;
+  width: max-content;
+}
+
+.share {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  justify-content: space-between;
+}
+
+.bold {
+  font-weight: 700;
+  font-size: var(--font-size-h5);
+}
+
+.home .share a {
+  color: #333;
+  text-decoration: none;
+}
+
+.share div {
+  background-color: var(--color-white);
+}
+
+.home-error {
+  position: absolute;
+  color: red;
+  margin-top: -2rem;
+}

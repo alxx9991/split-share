@@ -1,0 +1,30 @@
+.button {
+  background-color: var(--color-primary);
+  border: 1.5px solid transparent;
+  padding: 0.5rem;
+  border-radius: 0.2rem;
+  box-shadow: 0.2rem 0.2rem 0.3rem 0 rgba(0, 0, 0, 0.5);
+  height: 4rem;
+  width: 4rem;
+}
+
+.button--loading {
+  background-color: #ccc;
+}
+
+.button--error {
+  background-color: #ffcccb;
+}
+
+.button:hover {
+  border: 1.5px solid var(--color-white);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 0.2rem;
+  box-shadow: 0.2rem 0.2rem 0.3rem 0 rgba(0, 0, 0, 0.5);
+}
+
+.button--loading:hover {
+  color: inherit;
+  border: 1.5px solid transparent;
+}

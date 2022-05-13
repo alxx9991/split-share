@@ -6,6 +6,11 @@
   width: 80%;
 }
 
+.create-expenses h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
 .create-expenses__inner {
   display: flex;
   flex-direction: column;
@@ -19,4 +24,16 @@
 
 .error {
   color: red;
+}
+
+.create-expenses__input {
+  width: 100%;
+}
+
+.controls {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  align-items: center;
+  margin: 2rem 0;
 }

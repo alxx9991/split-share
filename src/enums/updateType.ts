@@ -4,4 +4,5 @@ export const enum UpdateType {
   ADD_USER,
   EDIT_USER,
   DELETE_USER,
+  CHANGE_NAME,
 }
