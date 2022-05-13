@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Button from "../ui/Button";
 import classes from "./Nav.module.css";
 import { useLocation } from "react-router-dom";
