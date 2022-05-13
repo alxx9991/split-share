@@ -6,7 +6,7 @@ const Header = () => {
     <>
       <header className={classes.header}>
         <div className={classes["header-content"]}>
-          <h1>Split Share</h1>
+          <h1>Share Split</h1>
           <Nav></Nav>
         </div>
       </header>

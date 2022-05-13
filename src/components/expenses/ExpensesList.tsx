@@ -42,10 +42,10 @@ const ExpensesList = () => {
 
   //Generate sort options
   const sortOptionStrings: string[] = [
-    "Date Latest First",
-    "Date Earliest First",
-    "Lowest Amount First",
-    "Highest Amount First",
+    "Latest Date",
+    "Earliest Date",
+    "Lowest Amount",
+    "Highest Amount",
   ];
 
   const sortOptions: { label: string; value: string }[] = [];
@@ -65,7 +65,7 @@ const ExpensesList = () => {
 
   //Sort table rows based on selected option
   switch (sortBy.value) {
-    case "Date Earliest First":
+    case "Earliest Date":
       expensesList.sort((a, b) => {
         const [aYear, aMonth, aDay] = a.date
           .split("-")
@@ -85,7 +85,7 @@ const ExpensesList = () => {
       });
       break;
 
-    case "Date Latest First":
+    case "Latest Date":
       expensesList.sort((a, b) => {
         const [aYear, aMonth, aDay] = a.date
           .split("-")
@@ -105,7 +105,7 @@ const ExpensesList = () => {
       });
       break;
 
-    case "Lowest Amount First":
+    case "Lowest Amount":
       expensesList.sort((a, b) => {
         if (a.amount < b.amount) {
           return -1;
@@ -117,7 +117,7 @@ const ExpensesList = () => {
       });
       break;
 
-    case "Highest Amount First":
+    case "Highest Amount":
       expensesList.sort((a, b) => {
         if (a.amount < b.amount) {
           return 1;

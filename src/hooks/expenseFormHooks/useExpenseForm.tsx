@@ -61,11 +61,10 @@ const useExpenseFormHandlers = () => {
   }
 
   const entireFormValid =
-    expenseNameInputValid &&
-    dateInputValid &&
-    paidByInputValid &&
-    sharedBetweenInputValid &&
-    amountInputValid &&
+    formState.expenseName.expenseNameValid &&
+    formState.sharedBetween.sharedBetweenValid &&
+    formState.paidBy.paidByValid &&
+    formState.amount.amountValid &&
     unallocated === 0;
 
   //Handlers

@@ -81,7 +81,7 @@ const HomePage = () => {
         )}
         <div className={classes.home__inner}>
           <p>
-            Welcome to Split Share! If you haven't already, add your first user
+            Welcome to Share Split! If you haven't already, add your first user
             to get started!
           </p>
           <Link to={`/${docID}/users`}>
