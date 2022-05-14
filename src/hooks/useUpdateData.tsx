@@ -17,7 +17,9 @@ const useUpdateData = () => {
   const localExpenses = useSelector(
     (state: RootState) => state.expenses.expenses
   );
-
+  const localListName = useSelector(
+    (state: RootState) => state.global.listName
+  );
   //Retrieves data from database and checks if the data is unchanged. Throws an error if the data is not received, or if the data is changed. Returns cloned version of data
   const verifyData = async () => {
     setUpdateIsLoading(true);
@@ -35,10 +37,16 @@ const useUpdateData = () => {
     //Verify that the data on the database is the same as the data in the store
     if (
       JSON.stringify(data.users) !== JSON.stringify(localUsers) ||
-      JSON.stringify(data.expenses) !== JSON.stringify(localExpenses)
+      JSON.stringify(data.expenses) !== JSON.stringify(localExpenses) ||
+      JSON.stringify(data.listName) !== JSON.stringify(localListName)
     ) {
       setUpdateError("Local data out of sync. Please refresh the page.");
-      console.error("Local data out of sync. Please refresh the page.");
+      console.error(
+        "Local data out of sync. Someone else may be editing the list at the same time as you. Please refresh the page."
+      );
+      alert(
+        "Local data out of sync. Someone else may be editing the list at the same time as you. Please refresh the page."
+      );
       console.log("Local data:", JSON.stringify(localUsers));
       console.log("Database data:", JSON.stringify(data.users));
       return null;
