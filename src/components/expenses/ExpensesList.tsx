@@ -24,8 +24,8 @@ const styles: StylesConfig = {
 const ExpensesList = () => {
   //Hooks
   const [sortBy, setSortBy] = useState({
-    label: "Date Latest First",
-    value: "Date Latest First",
+    label: "Latest Date",
+    value: "Latest Date",
   });
 
   const [filterBy, setFilterBy] = useState("");
