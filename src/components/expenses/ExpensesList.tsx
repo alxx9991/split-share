@@ -135,20 +135,24 @@ const ExpensesList = () => {
   }
 
   //Filter local expenses list based on filter text
+  let filteredExpensesList = expensesList;
+
   if (filterBy !== "") {
-    expensesList = expensesList.filter((expense) => {
-      if (expense.amount.toString().includes(filterBy)) {
+    filteredExpensesList = expensesList.filter((expense) => {
+      if (
+        expense.amount.toString().toLowerCase().includes(filterBy.toLowerCase())
+      ) {
         return true;
       }
-      if (expense.name.includes(filterBy)) {
+      if (expense.name.toLowerCase().includes(filterBy.toLowerCase())) {
         return true;
       }
 
-      if (expense.date.includes(filterBy)) {
+      if (expense.date.toLowerCase().includes(filterBy.toLowerCase())) {
         return true;
       }
 
-      if (expense.paidBy.includes(filterBy)) {
+      if (expense.paidBy.toLowerCase().includes(filterBy.toLowerCase())) {
         return true;
       }
 
@@ -161,11 +165,7 @@ const ExpensesList = () => {
       <Card>
         <div className={classes["expense-list__inner"]}>
           <h2>Expense List</h2>
-          {false ? (
-            <p className={classes["no-expenses"]}>Loading expenses...</p>
-          ) : false ? (
-            <p className={classes["no-expenses"]}>{false}</p>
-          ) : expensesList.length > 0 ? (
+          {expensesList.length > 0 ? (
             <>
               <div className={classes["filter-container"]}>
                 <div className={classes["search-container"]}>
@@ -188,10 +188,10 @@ const ExpensesList = () => {
                   ></Select>
                 </div>
               </div>
-              <ExpenseTable expensesList={expensesList}></ExpenseTable>
+              <ExpenseTable expensesList={filteredExpensesList}></ExpenseTable>
             </>
           ) : (
-            <p className={classes["no-expenses"]}>No expenses added yet</p>
+            <p className={classes["no-expenses"]}>No expenses added yet.</p>
           )}
         </div>
       </Card>
