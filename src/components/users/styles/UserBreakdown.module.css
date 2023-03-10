@@ -1,5 +1,6 @@
 .user-breakdown {
-  background-color: var(--color-white);
+  background-color: var(--color-grey);
+  border-radius: 1rem;
   width: 100%;
   padding: 1.5rem;
   box-shadow: 0.2rem 0.2rem 0.5rem 0 rgba(0, 0, 0, 0.1);
